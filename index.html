@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tobias Braun</title>
+  <meta name="description" content="Tobias Braun — ELLIS PhD Candidate at TU Darmstadt, ML researcher, and author.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- Academicons (for Google Scholar icon) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- Apply saved theme immediately to avoid flash -->
+  <script>
+    (function() {
+      var saved = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <style>
+    /* ===== THEME VARIABLES ===== */
+    :root[data-theme="dark"] {
+      --bg:             #0f172a;
+      --bg-secondary:   #1a2540;
+      --bg-card:        #1e293b;
+      --bg-card-hover:  #233050;
+      --border:         #2d3f5a;
+      --accent:         #3b82f6;
+      --accent-hover:   #60a5fa;
+      --accent-glow:    rgba(59, 130, 246, 0.20);
+      --text:           #cbd5e1;
+      --text-muted:     #64748b;
+      --text-heading:   #f1f5f9;
+      --badge-bg:       #1d3461;
+      --badge-text:     #93c5fd;
+      --badge-gold-bg:  #312107;
+      --badge-gold:     #fbbf24;
+      --shadow:         rgba(0, 0, 0, 0.5);
+      --nav-bg:         rgba(15, 23, 42, 0.92);
+    }
+
+    :root[data-theme="light"] {
+      --bg:             #f8fafc;
+      --bg-secondary:   #eef2ff;
+      --bg-card:        #ffffff;
+      --bg-card-hover:  #eff6ff;
+      --border:         #bfdbfe;
+      --accent:         #2563eb;
+      --accent-hover:   #1d4ed8;
+      --accent-glow:    rgba(37, 99, 235, 0.12);
+      --text:           #334155;
+      --text-muted:     #64748b;
+      --text-heading:   #0f172a;
+      --badge-bg:       #dbeafe;
+      --badge-text:     #1e40af;
+      --badge-gold-bg:  #fef3c7;
+      --badge-gold:     #b45309;
+      --shadow:         rgba(0, 0, 0, 0.07);
+      --nav-bg:         rgba(248, 250, 252, 0.92);
+    }
+
+    /* ===== BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+    h1, h2, h3, h4 { color: var(--text-heading); line-height: 1.3; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      transition: background 0.3s ease;
+    }
+
+    .navbar__name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-heading);
+      letter-spacing: -0.02em;
+    }
+
+    .navbar__right {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .navbar__right li a {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .navbar__right li a:hover {
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      margin-left: 0.5rem;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+    [data-theme="dark"] .icon-sun  { display: inline; }
+    [data-theme="dark"] .icon-moon { display: none;   }
+    [data-theme="light"] .icon-sun  { display: none;   }
+    [data-theme="light"] .icon-moon { display: inline; }
+
+    /* ===== HERO / BANNER ===== */
+    .hero {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 5.5rem 2rem 4.5rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero__accent { color: var(--accent); }
+
+    .hero__subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero__tagline {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 2.2rem;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--bg-card);
+      transition: all 0.2s ease;
+    }
+    .social-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* ===== SHARED LAYOUT ===== */
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem;
+    }
+
+    .section-alt {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--accent);
+    }
+    .section-title i { color: var(--accent); font-size: 1.05rem; }
+
+    /* ===== ABOUT ME ===== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 600px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-photo { display: flex; flex-direction: column; align-items: center; }
+    }
+
+    .about-photo img {
+      width: 190px;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      display: block;
+      transition: all 0.3s ease;
+    }
+    .about-photo img:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .photo-placeholder {
+      width: 190px;
+      height: 190px;
+      border-radius: 12px;
+      border: 2px dashed var(--border);
+      background: var(--bg-card);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--text-muted);
+    }
+
+    .about-meta {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .about-meta a { color: var(--text-muted); }
+    .about-meta a:hover { color: var(--accent); }
+    .about-meta i { width: 14px; }
+
+    .about-text p { margin-bottom: 0.9rem; }
+
+    .about-links {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-top: 1.1rem;
+    }
+    .about-links a { font-weight: 600; font-size: 0.875rem; }
+
+    /* ===== RESEARCH INTEREST BOXES ===== */
+    .research-label {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.92rem;
+      margin: 1.75rem 0 0.75rem;
+    }
+
+    .research-boxes {
+      display: flex;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .research-box {
+      flex: 1;
+      min-width: 135px;
+      border-radius: 10px;
+      padding: 1.1rem 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: default;
+      transition: all 0.25s ease;
+    }
+    .research-box:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    .research-box-icon {
+      font-size: 1.55rem;
+      color: var(--accent);
+      margin-bottom: 0.45rem;
+    }
+    .research-box-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-heading);
+      margin-bottom: 0.3rem;
+    }
+    .research-box-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ===== PUBLICATIONS ===== */
+    .pubs-sublabel {
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .pub-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
+
+    .pub-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      transition: all 0.25s ease;
+    }
+    .pub-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 18px var(--accent-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .pub-title {
+      font-weight: 600;
+      font-size: 0.94rem;
+      color: var(--text-heading);
+      margin-bottom: 0.2rem;
+    }
+    .pub-authors {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.35rem;
+      vertical-align: middle;
+    }
+    .badge-blue   { background: var(--badge-bg);      color: var(--badge-text); }
+    .badge-gold   { background: var(--badge-gold-bg); color: var(--badge-gold); }
+
+    /* ===== BOOK ===== */
+    .book-card {
+      display: grid;
+      grid-template-columns: 155px 1fr;
+      gap: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.3s ease;
+    }
+    .book-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px var(--accent-glow);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 500px) {
+      .book-card { grid-template-columns: 1fr; }
+    }
+
+    .book-cover img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px var(--shadow);
+      display: block;
+    }
+    .book-cover-placeholder {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      border: 2px dashed var(--border);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--text-muted);
+    }
+
+    .book-title  { font-size: 1.2rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.2rem; }
+    .book-author { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; font-style: italic; }
+    .book-desc   { font-size: 0.91rem; color: var(--text); line-height: 1.65; margin-bottom: 1.25rem; }
+
+    /* ===== CV ===== */
+    .cv-inner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .cv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 580px) { .cv-grid { grid-template-columns: 1fr; } }
+
+    .cv-group-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .cv-item {
+      padding: 0.75rem 1rem;
+      border-left: 3px solid var(--border);
+      margin-bottom: 0.7rem;
+      border-radius: 0 6px 6px 0;
+      transition: all 0.2s ease;
+    }
+    .cv-item:hover {
+      border-left-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+    .cv-item-title { font-weight: 600; font-size: 0.9rem; color: var(--text-heading); }
+    .cv-item-sub   { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    .cv-download { margin-top: 1.75rem; }
+
+    /* ===== BUTTON ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.2rem;
+      background: var(--accent);
+      color: #fff !important;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 14px var(--accent-glow); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+
+    /* ===== MOBILE NAV ===== */
+    @media (max-width: 520px) {
+      .navbar__right .nav-link-item { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <span class="navbar__name">Tobias Braun</span>
+    <ul class="navbar__right">
+      <li class="nav-link-item"><a href="#about">About</a></li>
+      <li class="nav-link-item"><a href="#publications">Publications</a></li>
+      <li class="nav-link-item"><a href="#book">Book</a></li>
+      <li class="nav-link-item"><a href="#cv">CV</a></li>
+      <li>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+          <i class="fas fa-sun icon-sun"></i>
+          <i class="fas fa-moon icon-moon"></i>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ===== HERO BANNER ===== -->
+  <section class="hero">
+    <h1>Tobias <span class="hero__accent">Braun</span></h1>
+    <p class="hero__subtitle">ELLIS PhD Candidate &nbsp;·&nbsp; Robust Multimodal Learning</p>
+    <p class="hero__tagline">TU Darmstadt &amp; visiting UCL &nbsp;·&nbsp; Columbia M.S. OR &nbsp;·&nbsp; ML Researcher, Educator, Author</p>
+    <div class="social-links">
+      <a href="https://www.linkedin.com/in/tobias-braun-34a703166/" target="_blank" class="social-link">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </a>
+      <a href="https://scholar.google.com/citations?user=wqVWJNIAAAAJ" target="_blank" class="social-link">
+        <i class="ai ai-google-scholar"></i> Google Scholar
+      </a>
+      <a href="https://www.amazon.com/Bold-Wise-Lucky-Gyp-Brown/dp/B0BSJLLPZC" target="_blank" class="social-link">
+        <i class="fas fa-book"></i> Book
+      </a>
+      <a href="mailto:tobias.braun@mai.tu-darmstadt.de" class="social-link">
+        <i class="fas fa-envelope"></i> Email
+      </a>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- ===== ABOUT ME ===== -->
+    <section id="about">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-user"></i> About Me</h2>
+        <div class="about-grid">
+
+          <!-- Photo column -->
+          <div class="about-photo">
+            <!--
+              Add your photo to the website folder as "photo.jpg".
+              The placeholder icon shows automatically if the file is missing.
+            -->
+            <img src="photo.jpg" alt="Tobias Braun"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="photo-placeholder"><i class="fas fa-user"></i></div>
+            <div class="about-meta">
+              <span><i class="fas fa-map-marker-alt"></i> Frankfurt &amp; Darmstadt, Germany</span>
+              <a href="mailto:tobias.braun@mai.tu-darmstadt.de">
+                <i class="fas fa-envelope"></i> tobias.braun@mai.tu-darmstadt.de
+              </a>
+            </div>
+          </div>
+
+          <!-- Text column -->
+          <div class="about-text">
+            <p>
+              I am an <a href="https://ellis.eu/" target="_blank">ELLIS</a> PhD Candidate at the
+              <a href="https://www.tu-darmstadt.de/" target="_blank">Technical University of Darmstadt</a>
+              (Multimodal AI Lab, Prof. Marcus Rohrbach), and currently a visiting researcher at
+              UCL's Systems Security Lab (Prof. Lorenzo Cavallaro). My research focuses on
+              <strong>robust multimodal learning</strong> — understanding how AI systems that reason
+              across text, images, and other modalities can be made more secure and reliable.
+            </p>
+            <p>
+              I hold an <strong>M.S. in Operations Research</strong> from
+              <a href="https://www.columbia.edu/" target="_blank">Columbia University</a> (GPA&nbsp;3.9/4.0)
+              and a <strong>B.S. in Industrial Engineering</strong> from
+              <a href="https://www.kit.edu/" target="_blank">KIT</a> (Top&nbsp;5%, with distinction).
+              Before my PhD I worked as an independent ML engineer, conducting over 60 workshops that helped
+              organisations across sectors harness AI in practice.
+            </p>
+            <p>
+              I am a <strong>Gold Reviewer</strong> at ICML&nbsp;2026, an honor I find as motivating as
+              it is humbling. Outside the lab you will find me playing chess, writing, lifeguarding, or
+              somewhere in the mountains.
+            </p>
+            <div class="about-links">
+              <a href="#publications">Publications &rarr;</a>
+              <a href="#cv">Curriculum Vitae &rarr;</a>
+              <a href="https://scholar.google.com/citations?user=wqVWJNIAAAAJ" target="_blank">Google Scholar &rarr;</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Research interests -->
+        <p class="research-label">Research Interests</p>
+        <div class="research-boxes">
+          <div class="research-box">
+            <div class="research-box-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="research-box-title">Robustness &amp; Security</div>
+            <div class="research-box-desc">Adversarial attacks, backdoor defenses, and concept erasure in generative models</div>
+          </div>
+          <div class="research-box">
+            <div class="research-box-icon"><i class="fas fa-eye"></i></div>
+            <div class="research-box-title">Multimodal AI</div>
+            <div class="research-box-desc">Cross-modal reasoning, vision-language models, and multimodal understanding</div>
+          </div>
+          <div class="research-box">
+            <div class="research-box-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+            <div class="research-box-title">Fact-Checking</div>
+            <div class="research-box-desc">Automated, evidence-based verification of claims using multimodal expert systems</div>
+          </div>
+          <div class="research-box">
+            <div class="research-box-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+            <div class="research-box-title">Generative Models</div>
+            <div class="research-box-desc">Rectified flows, diffusion models, and controlled generation under safety constraints</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== PUBLICATIONS ===== -->
+    <section id="publications" class="section-alt">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-scroll"></i> Publications</h2>
+
+        <p class="pubs-sublabel">Conferences</p>
+        <div class="pub-list">
+          <div class="pub-item">
+            <div class="pub-title">GEM: Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-gold">⭐ Spotlight</span>
+            <span class="badge badge-blue">ICML 2026</span>
+          </div>
+          <div class="pub-item">
+            <div class="pub-title">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-blue">ICML 2026</span>
+          </div>
+          <div class="pub-item">
+            <div class="pub-title">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-blue">ICML 2025</span>
+          </div>
+        </div>
+
+        <p class="pubs-sublabel">Workshops</p>
+        <div class="pub-list">
+          <div class="pub-item">
+            <div class="pub-title">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-blue">ICLR 2026 Workshop</span>
+          </div>
+          <div class="pub-item">
+            <div class="pub-title">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-blue">ICML 2025 Workshop</span>
+          </div>
+          <div class="pub-item">
+            <div class="pub-title">InFact: A Strong Baseline for Automated Fact-checking</div>
+            <div class="pub-authors">Tobias Braun et al.</div>
+            <span class="badge badge-blue">FEVER 2024 Workshop</span>
+          </div>
+        </div>
+
+        <a href="https://scholar.google.com/citations?user=wqVWJNIAAAAJ" target="_blank" class="btn">
+          <i class="ai ai-google-scholar"></i> Full list on Google Scholar
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== BOOK ===== -->
+    <section id="book">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-book-open"></i> Book</h2>
+        <div class="book-card">
+
+          <!-- Book cover -->
+          <div class="book-cover">
+            <!--
+              Add your book cover image as "book_cover.jpg" in the website folder,
+              or replace the src with a direct image URL.
+              The placeholder shows automatically if the file is missing.
+            -->
+            <img src="book_cover.jpg" alt="Bold, Wise &amp; Lucky book cover"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="book-cover-placeholder"><i class="fas fa-book"></i></div>
+          </div>
+
+          <!-- Book content -->
+          <div class="book-content">
+            <div class="book-title">Bold, Wise &amp; Lucky</div>
+            <div class="book-author">by Gyp Brown</div>
+            <div class="book-desc">
+              <!--
+                DRAFT — please revise this description to match your vision for the book.
+              -->
+              What separates those who act from those who wait? <em>Bold, Wise &amp; Lucky</em> is a
+              reflection on the forces that shape an unconventional life — the courage to make bold moves,
+              the discipline to build genuine wisdom, and the readiness to recognise luck when it arrives.
+              Written under the pen name Gyp Brown, the book blends personal narrative with honest
+              observations about ambition, risk, and the pursuit of a life lived on one's own terms.
+            </div>
+            <a href="https://www.amazon.com/Bold-Wise-Lucky-Gyp-Brown/dp/B0BSJLLPZC"
+               target="_blank" class="btn">
+              <i class="fab fa-amazon"></i> View on Amazon
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CURRICULUM VITAE ===== -->
+    <section id="cv" class="section-alt">
+      <div class="container">
+        <h2 class="section-title"><i class="fas fa-file-lines"></i> Curriculum Vitae</h2>
+        <div class="cv-inner">
+          <div class="cv-grid">
+
+            <!-- Education -->
+            <div>
+              <div class="cv-group-title">Education</div>
+              <div class="cv-item">
+                <div class="cv-item-title">PhD — TU Darmstadt (ELLIS Candidate)</div>
+                <div class="cv-item-sub">Multimodal AI Lab · Mar 2024 – present</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">Visiting Researcher — UCL</div>
+                <div class="cv-item-sub">Systems Security Lab · Jun 2026 – present</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">M.S. Operations Research — Columbia University</div>
+                <div class="cv-item-sub">GPA 3.9 / 4.0 · Aug 2018 – Dec 2019</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">B.S. Industrial Engineering — KIT</div>
+                <div class="cv-item-sub">Top 5%, with distinction · Sep 2014 – Aug 2017</div>
+              </div>
+            </div>
+
+            <!-- Experience -->
+            <div>
+              <div class="cv-group-title">Experience &amp; Service</div>
+              <div class="cv-item">
+                <div class="cv-item-title">Research &amp; Teaching — TU Darmstadt</div>
+                <div class="cv-item-sub">Stat. ML course (500+ students) · Mar 2024 – present</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">Independent ML Engineer</div>
+                <div class="cv-item-sub">60+ AI workshops across industries · Sep 2020 – today</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">Research Intern — Columbia × Facebook</div>
+                <div class="cv-item-sub">NLP &amp; SQL query analysis · Jun – Aug 2020</div>
+              </div>
+              <div class="cv-item">
+                <div class="cv-item-title">Gold Reviewer — ICML 2026</div>
+                <div class="cv-item-sub">Top reviewer recognition</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="cv-download">
+            <!--
+              Add your CV PDF to the website folder as "cv.pdf" and update the href below.
+            -->
+            <a href="cv.pdf" target="_blank" class="btn">
+              <i class="fas fa-download"></i> Download Full CV (PDF)
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>Tobias Braun &nbsp;·&nbsp; Frankfurt, Germany</p>
+    <p><a href="mailto:tobias.braun@mai.tu-darmstadt.de">tobias.braun@mai.tu-darmstadt.de</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.75rem;">Built with plain HTML &amp; CSS &nbsp;·&nbsp; Hosted on GitHub Pages</p>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // Dark / light mode toggle
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var html = document.documentElement;
+      var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  </script>
+
+</body>
+</html>
