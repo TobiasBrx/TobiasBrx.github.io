@@ -154,12 +154,12 @@
 
     .hero h1 {
       font-size: clamp(2.8rem, 7vw, 4.5rem);
-      font-weight: 700;
-      letter-spacing: -0.04em;
+      font-weight: 300;
+      letter-spacing: -0.01em;
       margin-bottom: 0.6rem;
     }
 
-    .hero__accent { color: var(--accent); }
+    .hero__accent { color: var(--text-heading); }
 
     .hero__subtitle {
       font-size: 1.1rem;
@@ -529,7 +529,7 @@
 
   <!-- ===== HERO BANNER ===== -->
   <section class="hero">
-    <h1>Tobias <span class="hero__accent">Braun</span></h1>
+    <h1>Tobias Braun</h1>
     <p class="hero__subtitle">ELLIS PhD Candidate &nbsp;·&nbsp; Robust Multimodal Learning</p>
     <p class="hero__tagline">TU Darmstadt &amp; visiting UCL &nbsp;·&nbsp; Columbia M.S. OR &nbsp;·&nbsp; ML Researcher, Educator, Author</p>
     <div class="social-links">
@@ -542,9 +542,9 @@
       <a href="https://www.amazon.com/Bold-Wise-Lucky-Gyp-Brown/dp/B0BSJLLPZC" target="_blank" class="social-link">
         <i class="fas fa-book"></i> Book
       </a>
-      <a href="mailto:tobias.braun@mai.tu-darmstadt.de" class="social-link">
-        <i class="fas fa-envelope"></i> Email
-      </a>
+      <span class="social-link" style="cursor:default;">
+        <i class="fas fa-envelope"></i> tobias.braun(at)mai.tu-darmstadt.de
+      </span>
     </div>
   </section>
 
@@ -562,14 +562,12 @@
               Add your photo to the website folder as "photo.jpg".
               The placeholder icon shows automatically if the file is missing.
             -->
-            <img src="photo.jpg" alt="Tobias Braun"
+            <img src="icml_nett-37418.JPG" alt="Tobias Braun"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <div class="photo-placeholder"><i class="fas fa-user"></i></div>
             <div class="about-meta">
-              <span><i class="fas fa-map-marker-alt"></i> Frankfurt &amp; Darmstadt, Germany</span>
-              <a href="mailto:tobias.braun@mai.tu-darmstadt.de">
-                <i class="fas fa-envelope"></i> tobias.braun@mai.tu-darmstadt.de
-              </a>
+              <span><i class="fas fa-map-marker-alt"></i> London, UK</span>
+              <span><i class="fas fa-envelope"></i> tobias.braun(at)mai.tu-darmstadt.de</span>
             </div>
           </div>
 
@@ -641,19 +639,19 @@
         <p class="pubs-sublabel">Conferences</p>
         <div class="pub-list">
           <div class="pub-item">
-            <div class="pub-title">GEM: Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
+            <div class="pub-title"><a href="https://arxiv.org/abs/2606.00140" target="_blank">Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</a></div>
+            <div class="pub-authors">Grebe et al. 2026</div>
             <span class="badge badge-gold">⭐ Spotlight</span>
             <span class="badge badge-blue">ICML 2026</span>
           </div>
           <div class="pub-item">
-            <div class="pub-title">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
+            <div class="pub-title"><a href="https://arxiv.org/abs/2504.21072" target="_blank">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</a></div>
+            <div class="pub-authors">Braun et al. 2026</div>
             <span class="badge badge-blue">ICML 2026</span>
           </div>
           <div class="pub-item">
-            <div class="pub-title">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
+            <div class="pub-title"><a href="https://arxiv.org/abs/2412.10510" target="_blank">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</a></div>
+            <div class="pub-authors">Braun et al. 2025</div>
             <span class="badge badge-blue">ICML 2025</span>
           </div>
         </div>
@@ -661,18 +659,13 @@
         <p class="pubs-sublabel">Workshops</p>
         <div class="pub-list">
           <div class="pub-item">
-            <div class="pub-title">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
+            <div class="pub-title"><a href="https://arxiv.org/abs/2603.04064" target="_blank">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</a></div>
+            <div class="pub-authors">Braun et al. 2026</div>
             <span class="badge badge-blue">ICLR 2026 Workshop</span>
           </div>
           <div class="pub-item">
-            <div class="pub-title">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
-            <span class="badge badge-blue">ICML 2025 Workshop</span>
-          </div>
-          <div class="pub-item">
-            <div class="pub-title">InFact: A Strong Baseline for Automated Fact-checking</div>
-            <div class="pub-authors">Tobias Braun et al.</div>
+            <div class="pub-title"><a href="https://aclanthology.org/2024.fever-1.12/" target="_blank">InFact: A Strong Baseline for Automated Fact-Checking</a></div>
+            <div class="pub-authors">Braun et al. 2024</div>
             <span class="badge badge-blue">FEVER 2024 Workshop</span>
           </div>
         </div>
@@ -696,7 +689,7 @@
               or replace the src with a direct image URL.
               The placeholder shows automatically if the file is missing.
             -->
-            <img src="book_cover.jpg" alt="Bold, Wise &amp; Lucky book cover"
+            <img src="bowilu_cover.png" alt="Bold, Wise &amp; Lucky book cover"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <div class="book-cover-placeholder"><i class="fas fa-book"></i></div>
           </div>
@@ -792,8 +785,8 @@
 
   <!-- ===== FOOTER ===== -->
   <footer>
-    <p>Tobias Braun &nbsp;·&nbsp; Frankfurt, Germany</p>
-    <p><a href="mailto:tobias.braun@mai.tu-darmstadt.de">tobias.braun@mai.tu-darmstadt.de</a></p>
+    <p>Tobias Braun &nbsp;·&nbsp; London, UK</p>
+    <p>tobias.braun(at)mai.tu-darmstadt.de</p>
     <p style="margin-top: 0.5rem; font-size: 0.75rem;">Built with plain HTML &amp; CSS &nbsp;·&nbsp; Hosted on GitHub Pages</p>
   </footer>
 
