@@ -547,6 +547,51 @@
       margin-bottom: 0.75rem;
     }
 
+    /* ===== PARTNER LOGOS ===== */
+    .partners-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0;
+      overflow: hidden;
+      background: var(--bg-secondary);
+    }
+    .partners-label {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+    .partners-track-wrapper {
+      overflow: hidden;
+      width: 100%;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+    .partners-track {
+      display: flex;
+      align-items: center;
+      gap: 3.5rem;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+    .partners-track:hover { animation-play-state: paused; }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .partner-logo {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(100%) opacity(0.55);
+      transition: filter 0.3s ease;
+      flex-shrink: 0;
+    }
+    .partner-logo:hover { filter: grayscale(0%) opacity(1); }
+
     /* ===== FOOTER ===== */
     footer {
       border-top: 1px solid var(--border);
@@ -848,6 +893,27 @@
               <i class="fas fa-download"></i> Download Full CV (PDF)
             </a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== WORKSHOP PARTNERS ===== -->
+    <section class="partners-section">
+      <div class="partners-label">Selected workshop &amp; consulting partners</div>
+      <div class="partners-track-wrapper">
+        <div class="partners-track">
+          <!-- set 1 -->
+          <img src="workshop_partners/FIS.jpeg"                       class="partner-logo" alt="FIS">
+          <img src="workshop_partners/blackmountain.png"              class="partner-logo" alt="Black Mountain">
+          <img src="workshop_partners/garp.png"                       class="partner-logo" alt="GARP">
+          <img src="workshop_partners/phorms.png"                     class="partner-logo" alt="Phorms">
+          <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
+          <!-- set 2 (duplicate for seamless loop) -->
+          <img src="workshop_partners/FIS.jpeg"                       class="partner-logo" alt="FIS">
+          <img src="workshop_partners/blackmountain.png"              class="partner-logo" alt="Black Mountain">
+          <img src="workshop_partners/garp.png"                       class="partner-logo" alt="GARP">
+          <img src="workshop_partners/phorms.png"                     class="partner-logo" alt="Phorms">
+          <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
         </div>
       </div>
     </section>
