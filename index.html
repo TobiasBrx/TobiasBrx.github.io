@@ -354,6 +354,44 @@
 
     .pub-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
 
+    .featured-publications {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .featured-publication {
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 4px 18px var(--accent-glow);
+    }
+
+    .featured-publication .pubs-sublabel { margin-bottom: 0.65rem; color: var(--accent); }
+
+    .latest-note {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      margin-bottom: 0.8rem;
+    }
+
+    .publications-scroll {
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 0.15rem 0.6rem 0.15rem 0.15rem;
+      margin-bottom: 1.75rem;
+      scrollbar-color: var(--accent) var(--bg-card);
+    }
+
+    .publications-scroll .pub-list { margin-bottom: 0; }
+
+    @media (max-width: 620px) {
+      .featured-publications { grid-template-columns: 1fr; }
+    }
+
     .pub-item {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -758,42 +796,49 @@
       <div class="container">
         <h2 class="section-title"><i class="fas fa-scroll"></i> Publications</h2>
 
-        <p class="pubs-sublabel">Conferences</p>
-        <div class="pub-list">
+        <div class="featured-publications">
           <div class="pub-item">
             <div class="pub-title"><a href="https://arxiv.org/abs/2606.00140" target="_blank">Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</a></div>
             <div class="pub-authors">Grebe et al. 2026</div>
             <span class="badge badge-gold">⭐ Spotlight</span>
             <span class="badge badge-blue">ICML 2026</span>
           </div>
-          <div class="pub-item">
-            <div class="pub-title"><a href="https://arxiv.org/abs/2504.21072" target="_blank">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</a></div>
+          <div class="featured-publication">
+            <p class="pubs-sublabel">Latest Publication</p>
+            <div class="pub-title"><a href="https://arxiv.org/abs/2605.19227" target="_blank">Token by Token, Compromised: Backdoor Vulnerabilities in Unified Autoregressive Models</a></div>
             <div class="pub-authors">Braun et al. 2026</div>
-            <span class="badge badge-blue">ICML 2026</span>
-          </div>
-          <div class="pub-item">
-            <div class="pub-title"><a href="https://arxiv.org/abs/2412.10510" target="_blank">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</a></div>
-            <div class="pub-authors">Braun et al. 2025</div>
-            <span class="badge badge-blue">ICML 2025</span>
-          </div>
-          <div class="pub-item">
-            <div class="pub-title"><a href="https://arxiv.org/abs/2606.28643" target="_blank">Obliviate: Erasing Concepts from Autoregressive Image Generation Models</a></div>
-            <div class="pub-authors">Shakibania et al. 2026</div>
-            <span class="badge badge-blue">ECCV 2026</span>
+            <p class="latest-note">A new paper on backdoor vulnerabilities in unified autoregressive models. Publication venue to be announced soon.</p>
           </div>
         </div>
 
-        <p class="pubs-sublabel">Workshops</p>
-        <div class="pub-list">
-          <div class="pub-item">
-            <div class="pub-title"><a href="https://arxiv.org/abs/2603.04064" target="_blank">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</a></div>
-            <div class="pub-authors">Chen et al. 2026</div>
-            <span class="badge badge-blue">ICLR 2026 Workshop</span>
-          </div>
-          <div class="pub-item">
-            <div class="pub-title"><a href="https://aclanthology.org/2024.fever-1.12/" target="_blank">InFact: A Strong Baseline for Automated Fact-Checking</a></div>
-            <div class="pub-authors">Rothermel et al. 2024</div>
-            <span class="badge badge-blue">FEVER 2024 Workshop</span>
+        <p class="pubs-sublabel">Earlier Publications</p>
+        <div class="publications-scroll">
+          <div class="pub-list">
+            <div class="pub-item">
+              <div class="pub-title"><a href="https://arxiv.org/abs/2504.21072" target="_blank">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</a></div>
+              <div class="pub-authors">Braun et al. 2026</div>
+              <span class="badge badge-blue">ICML 2026</span>
+            </div>
+            <div class="pub-item">
+              <div class="pub-title"><a href="https://arxiv.org/abs/2606.28643" target="_blank">Obliviate: Erasing Concepts from Autoregressive Image Generation Models</a></div>
+              <div class="pub-authors">Shakibania et al. 2026</div>
+              <span class="badge badge-blue">ECCV 2026</span>
+            </div>
+            <div class="pub-item">
+              <div class="pub-title"><a href="https://arxiv.org/abs/2603.04064" target="_blank">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</a></div>
+              <div class="pub-authors">Chen et al. 2026</div>
+              <span class="badge badge-blue">EMNLP 2026 Findings</span>
+            </div>
+            <div class="pub-item">
+              <div class="pub-title"><a href="https://arxiv.org/abs/2412.10510" target="_blank">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</a></div>
+              <div class="pub-authors">Braun et al. 2025</div>
+              <span class="badge badge-blue">ICML 2025</span>
+            </div>
+            <div class="pub-item">
+              <div class="pub-title"><a href="https://aclanthology.org/2024.fever-1.12/" target="_blank">InFact: A Strong Baseline for Automated Fact-Checking</a></div>
+              <div class="pub-authors">Rothermel et al. 2024</div>
+              <span class="badge badge-blue">FEVER 2024 Workshop</span>
+            </div>
           </div>
         </div>
 
