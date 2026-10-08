@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tobias Braun</title>
-  <meta name="description" content="Tobias Braun — ELLIS PhD Candidate at TU Darmstadt, ML researcher, and author.">
+  <meta name="description" content="Tobias Braun. ELLIS PhD Candidate at TU Darmstadt and visiting researcher at UCL, working on robust and secure multimodal AI.">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,300;1,400;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,300;1,400;1,500&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <!-- Academicons (for Google Scholar icon) -->
@@ -20,42 +20,57 @@
   <!-- Apply saved theme immediately to avoid flash -->
   <script>
     (function() {
-      var saved = localStorage.getItem('theme') || 'dark';
+      var saved = 'dark';
+      try { saved = localStorage.getItem('theme') || 'dark'; } catch (e) {}
       document.documentElement.setAttribute('data-theme', saved);
+      document.documentElement.classList.add('js');
     })();
   </script>
 
   <style>
     /* ===== THEME VARIABLES ===== */
     :root[data-theme="dark"] {
-      --bg:             #0f172a;
-      --bg-secondary:   #1a2540;
-      --bg-card:        #1e293b;
-      --bg-card-hover:  #233050;
-      --border:         #2d3f5a;
+      --bg:             #0b1120;
+      --bg-secondary:   #111a2e;
+      --bg-card:        rgba(30, 41, 59, 0.62);
+      --bg-card-solid:  #1a2438;
+      --bg-card-hover:  rgba(37, 52, 80, 0.75);
+      --border:         rgba(100, 130, 180, 0.22);
       --accent:         #3b82f6;
       --accent-hover:   #60a5fa;
-      --accent-glow:    rgba(59, 130, 246, 0.20);
+      --accent-2:       #8b5cf6;
+      --accent-3:       #22d3ee;
+      --accent-glow:    rgba(59, 130, 246, 0.22);
       --text:           #cbd5e1;
-      --text-muted:     #64748b;
+      --text-muted:     #7c8ba3;
       --text-heading:   #f1f5f9;
-      --badge-bg:       #1d3461;
+      --badge-bg:       rgba(59, 130, 246, 0.16);
       --badge-text:     #93c5fd;
-      --badge-gold-bg:  #312107;
+      --badge-gold-bg:  rgba(251, 191, 36, 0.14);
       --badge-gold:     #fbbf24;
+      --badge-gray-bg:  rgba(148, 163, 184, 0.14);
+      --badge-gray:     #b6c2d4;
       --shadow:         rgba(0, 0, 0, 0.5);
-      --nav-bg:         rgba(15, 23, 42, 0.92);
+      --nav-bg:         rgba(11, 17, 32, 0.72);
+      --particle:       96, 165, 250;
+      --aurora-1:       rgba(59, 130, 246, 0.30);
+      --aurora-2:       rgba(139, 92, 246, 0.24);
+      --aurora-3:       rgba(34, 211, 238, 0.14);
+      --spot:           rgba(96, 165, 250, 0.12);
     }
 
     :root[data-theme="light"] {
       --bg:             #f8fafc;
       --bg-secondary:   #eef2ff;
-      --bg-card:        #ffffff;
-      --bg-card-hover:  #eff6ff;
-      --border:         #bfdbfe;
+      --bg-card:        rgba(255, 255, 255, 0.78);
+      --bg-card-solid:  #ffffff;
+      --bg-card-hover:  rgba(239, 246, 255, 0.95);
+      --border:         rgba(37, 99, 235, 0.18);
       --accent:         #2563eb;
       --accent-hover:   #1d4ed8;
-      --accent-glow:    rgba(37, 99, 235, 0.12);
+      --accent-2:       #7c3aed;
+      --accent-3:       #0891b2;
+      --accent-glow:    rgba(37, 99, 235, 0.14);
       --text:           #334155;
       --text-muted:     #64748b;
       --text-heading:   #0f172a;
@@ -63,13 +78,20 @@
       --badge-text:     #1e40af;
       --badge-gold-bg:  #fef3c7;
       --badge-gold:     #b45309;
-      --shadow:         rgba(0, 0, 0, 0.07);
-      --nav-bg:         rgba(248, 250, 252, 0.92);
+      --badge-gray-bg:  #e2e8f0;
+      --badge-gray:     #475569;
+      --shadow:         rgba(15, 23, 42, 0.08);
+      --nav-bg:         rgba(248, 250, 252, 0.78);
+      --particle:       37, 99, 235;
+      --aurora-1:       rgba(59, 130, 246, 0.20);
+      --aurora-2:       rgba(139, 92, 246, 0.14);
+      --aurora-3:       rgba(34, 211, 238, 0.12);
+      --spot:           rgba(37, 99, 235, 0.08);
     }
 
     /* ===== BASE ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -77,11 +99,40 @@
       color: var(--text);
       line-height: 1.7;
       transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
     }
 
     a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
     a:hover { color: var(--accent-hover); }
     h1, h2, h3, h4 { color: var(--text-heading); line-height: 1.3; }
+
+    ::selection { background: var(--accent); color: #fff; }
+
+    /* Soft aurora behind the whole page */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .aurora span {
+      position: absolute;
+      width: 60vmax;
+      height: 60vmax;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.55;
+      animation: drift 28s ease-in-out infinite alternate;
+    }
+    .aurora span:nth-child(1) { background: var(--aurora-1); top: -25vmax; left: -15vmax; }
+    .aurora span:nth-child(2) { background: var(--aurora-2); top: 10vmax; right: -25vmax; animation-duration: 34s; animation-delay: -8s; }
+    .aurora span:nth-child(3) { background: var(--aurora-3); bottom: -30vmax; left: 20vmax; animation-duration: 40s; animation-delay: -16s; }
+    @keyframes drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(6vmax, 4vmax) scale(1.08); }
+      100% { transform: translate(-4vmax, 8vmax) scale(0.95); }
+    }
 
     /* ===== NAVBAR ===== */
     .navbar {
@@ -89,8 +140,8 @@
       top: 0;
       z-index: 100;
       background: var(--nav-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
       display: flex;
@@ -100,12 +151,24 @@
       transition: background 0.3s ease;
     }
 
+    .scroll-progress {
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      height: 2px;
+      width: 100%;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+    }
+
     .navbar__name {
       font-weight: 700;
       font-size: 1.05rem;
       color: var(--text-heading);
       letter-spacing: -0.02em;
     }
+    .navbar__name:hover { color: var(--text-heading); }
 
     .navbar__right {
       display: flex;
@@ -123,7 +186,8 @@
       transition: all 0.2s;
     }
 
-    .navbar__right li a:hover {
+    .navbar__right li a:hover,
+    .navbar__right li a.active {
       color: var(--accent);
       background: var(--accent-glow);
     }
@@ -149,36 +213,105 @@
 
     /* ===== HERO / BANNER ===== */
     .hero {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 5.5rem 2rem 4.5rem;
+      position: relative;
+      min-height: calc(92vh - 58px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 1.5rem 5.5rem;
       text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 120px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
+    }
+    .hero__eyebrow .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      box-shadow: 0 0 0 0 var(--accent-3);
+      animation: pulse 2.4s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.55); }
+      70%  { box-shadow: 0 0 0 10px rgba(34, 211, 238, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
     }
 
     .hero h1 {
-      font-size: clamp(2.1rem, 5.5vw, 3.75rem);
+      font-size: clamp(2.6rem, 7.5vw, 5rem);
       font-weight: 300;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.6rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.9rem;
+      line-height: 1.05;
     }
 
-    .hero__accent { color: var(--text-heading); }
+    .hero__accent {
+      font-weight: 700;
+      background: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 45%, var(--accent-3) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: sheen 9s ease-in-out infinite alternate;
+    }
+    @keyframes sheen {
+      0%   { background-position: 0% center; }
+      100% { background-position: 100% center; }
+    }
 
     .hero__subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
+      font-size: clamp(1rem, 2.4vw, 1.2rem);
+      color: var(--text);
       font-weight: 500;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
     }
 
     .hero__tagline {
-      font-size: 0.92rem;
+      font-size: 0.98rem;
       color: var(--text-muted);
-      margin-bottom: 2.2rem;
-      max-width: 540px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto 2.2rem;
+      max-width: 560px;
+      min-height: 1.7em;
     }
+    .rotator {
+      color: var(--text-heading);
+      font-weight: 600;
+      border-right: 2px solid var(--accent);
+      padding-right: 2px;
+      animation: caret 1s step-end infinite;
+    }
+    @keyframes caret { 50% { border-color: transparent; } }
 
     .social-links {
       display: flex;
@@ -193,11 +326,13 @@
       gap: 0.45rem;
       padding: 0.5rem 1.1rem;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 999px;
       color: var(--text-muted);
       font-size: 0.875rem;
       font-weight: 500;
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       transition: all 0.2s ease;
     }
     .social-link:hover {
@@ -205,67 +340,240 @@
       border-color: var(--accent);
       background: var(--bg-card-hover);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--accent-glow);
+      box-shadow: 0 6px 18px var(--accent-glow);
+    }
+
+    .hero__news {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 2.2rem;
+      padding: 0.4rem 0.5rem 0.4rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text);
+      font-size: 0.85rem;
+      transition: all 0.25s ease;
+      max-width: 100%;
+    }
+    .hero__news:hover { color: var(--text-heading); border-color: var(--accent); box-shadow: 0 6px 22px var(--accent-glow); }
+    .hero__news .pill {
+      background: linear-gradient(100deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .hero__news i { font-size: 0.75rem; color: var(--accent); margin-right: 0.35rem; transition: transform 0.2s; }
+    .hero__news:hover i { transform: translateX(3px); }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 1.6rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      animation: bob 2.2s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translate(-50%, 0); }
+      50%      { transform: translate(-50%, 7px); }
     }
 
     /* ===== SHARED LAYOUT ===== */
     .container {
-      max-width: 880px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 3.5rem 2rem;
+      padding: 4rem 2rem;
     }
 
     .section-alt {
-      background: var(--bg-secondary);
+      background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
 
     .section-title {
-      font-size: 1.35rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 2px solid var(--accent);
+      gap: 0.7rem;
     }
-    .section-title i { color: var(--accent); font-size: 1.05rem; }
+    .section-title i {
+      color: #fff;
+      font-size: 0.95rem;
+      width: 2.1rem;
+      height: 2.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 18px var(--accent-glow);
+    }
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      margin-left: 0.6rem;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* Glass card with cursor spotlight */
+    .spot {
+      position: relative;
+      overflow: hidden;
+    }
+    .spot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(420px circle at var(--mx, -500px) var(--my, -500px), var(--spot), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .spot:hover::before { opacity: 1; }
+    .spot > * { position: relative; }
+
+    /* Scroll reveal (only when JS runs) */
+    .js .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+      transition-delay: var(--d, 0s);
+    }
+    .js .reveal.visible { opacity: 1; transform: none; }
+
+    /* ===== NEWS ===== */
+    .news-list {
+      list-style: none;
+      position: relative;
+      padding-left: 1.6rem;
+    }
+    .news-list::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 0.55rem;
+      bottom: 0.55rem;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-2) 55%, var(--border));
+      border-radius: 2px;
+    }
+    .news-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 1rem;
+      padding: 0.15rem 0 1.25rem;
+    }
+    .news-item::before {
+      content: "";
+      position: absolute;
+      left: calc(-1.6rem + 1px);
+      top: 0.5rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--accent);
+    }
+    .news-item.hot::before {
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow), 0 0 16px var(--accent);
+    }
+    .news-date {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 0.15rem;
+      white-space: nowrap;
+    }
+    .news-body { font-size: 0.93rem; }
+    .news-body strong { color: var(--text-heading); }
+    .news-links {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.45rem;
+    }
+    .news-extra { display: none; }
+    .news-list.expanded .news-extra { display: grid; }
+    .news-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.95rem;
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 1.6rem;
+      transition: all 0.2s;
+    }
+    .news-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    @media (max-width: 560px) {
+      .news-item { grid-template-columns: 1fr; gap: 0.1rem; }
+    }
 
     /* ===== ABOUT ME ===== */
     .about-grid {
       display: grid;
-      grid-template-columns: 190px 1fr;
-      gap: 2.5rem;
+      grid-template-columns: 200px 1fr;
+      gap: 2.75rem;
       align-items: start;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .about-grid { grid-template-columns: 1fr; }
       .about-photo { display: flex; flex-direction: column; align-items: center; }
     }
 
-    .about-photo img {
-      width: 190px;
-      height: 190px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      display: block;
-      transition: all 0.3s ease;
+    .photo-frame {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 18px;
+      padding: 3px;
+      background: conic-gradient(from var(--angle, 0deg), var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+      animation: spin 10s linear infinite;
     }
-    .about-photo img:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 24px var(--accent-glow);
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes spin { to { --angle: 360deg; } }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      display: block;
+      background: var(--bg-card-solid);
     }
 
     .photo-placeholder {
-      width: 190px;
-      height: 190px;
-      border-radius: 12px;
-      border: 2px dashed var(--border);
-      background: var(--bg-card);
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+      background: var(--bg-card-solid);
       display: none;
       align-items: center;
       justify-content: center;
@@ -274,7 +582,7 @@
     }
 
     .about-meta {
-      margin-top: 0.9rem;
+      margin-top: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
@@ -299,47 +607,53 @@
     .research-label {
       font-weight: 700;
       color: var(--accent);
-      font-size: 0.92rem;
-      margin: 1.75rem 0 0.75rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 2.25rem 0 0.9rem;
     }
 
     .research-boxes {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.85rem;
-      flex-wrap: wrap;
     }
+    @media (max-width: 760px) { .research-boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     .research-box {
-      flex: 1;
-      min-width: 135px;
-      border-radius: 10px;
-      padding: 1.1rem 1rem;
+      border-radius: 14px;
+      padding: 1.25rem 1rem;
       text-align: center;
       border: 1px solid var(--border);
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       cursor: default;
-      transition: all 0.25s ease;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .research-box:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
       border-color: var(--accent);
-      box-shadow: 0 8px 24px var(--accent-glow);
+      box-shadow: 0 12px 30px var(--accent-glow);
     }
     .research-box-icon {
       font-size: 1.55rem;
-      color: var(--accent);
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
     .research-box-title {
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: var(--text-heading);
       margin-bottom: 0.3rem;
     }
     .research-box-desc {
       font-size: 0.78rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     /* ===== PUBLICATIONS ===== */
@@ -357,17 +671,22 @@
     .featured-publications {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.85rem;
-      margin-bottom: 2rem;
+      gap: 0.95rem;
+      margin-bottom: 2.25rem;
     }
 
     .featured-publication {
       background: var(--bg-card);
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      padding: 1.2rem;
-      box-shadow: 0 4px 18px var(--accent-glow);
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 1.3rem 1.3rem 1.15rem;
+      background:
+        linear-gradient(var(--bg-card-solid), var(--bg-card-solid)) padding-box,
+        linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3)) border-box;
+      box-shadow: 0 8px 28px var(--accent-glow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
+    .featured-publication:hover { transform: translateY(-4px); box-shadow: 0 14px 36px var(--accent-glow); }
 
     .featured-publication .pubs-sublabel { margin-bottom: 0.65rem; color: var(--accent); }
 
@@ -375,88 +694,148 @@
       color: var(--text-muted);
       font-size: 0.82rem;
       line-height: 1.55;
-      margin-bottom: 0.8rem;
+      margin-top: 0.7rem;
     }
 
-    .publications-scroll {
-      max-height: 360px;
-      overflow-y: auto;
-      padding: 0.15rem 0.6rem 0.15rem 0.15rem;
-      margin-bottom: 1.75rem;
-      scrollbar-color: var(--accent) var(--bg-card);
-    }
-
-    .publications-scroll .pub-list { margin-bottom: 0; }
-
-    @media (max-width: 620px) {
+    @media (max-width: 680px) {
       .featured-publications { grid-template-columns: 1fr; }
     }
 
+    .pub-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+    .pub-head .pubs-sublabel { margin-bottom: 0; }
+
+    .pub-filter {
+      display: inline-flex;
+      gap: 0.25rem;
+      padding: 0.2rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--bg-card);
+    }
+    .pub-filter button {
+      background: none;
+      border: none;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pub-filter button:hover { color: var(--accent); }
+    .pub-filter button.active { background: var(--accent); color: #fff; }
+
     .pub-item {
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--border);
       border-left: 4px solid var(--accent);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 1rem 1.2rem;
-      transition: all 0.25s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     }
     .pub-item:hover {
       transform: translateX(5px);
-      box-shadow: 0 4px 18px var(--accent-glow);
+      box-shadow: 0 6px 22px var(--accent-glow);
       background: var(--bg-card-hover);
     }
+    .pub-item[data-kind="preprint"] { border-left-color: var(--accent-2); }
+    .pub-item.hidden { display: none; }
 
     .pub-title {
       font-weight: 600;
-      font-size: 0.94rem;
+      font-size: 0.95rem;
       color: var(--text-heading);
       margin-bottom: 0.2rem;
     }
     .pub-authors {
       font-size: 0.82rem;
       color: var(--text-muted);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .pub-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
     }
 
     .badge {
       display: inline-block;
       padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
+      border-radius: 5px;
+      font-size: 0.74rem;
       font-weight: 600;
-      margin-right: 0.35rem;
       vertical-align: middle;
     }
     .badge-blue   { background: var(--badge-bg);      color: var(--badge-text); }
     .badge-gold   { background: var(--badge-gold-bg); color: var(--badge-gold); }
+    .badge-gray   { background: var(--badge-gray-bg); color: var(--badge-gray); }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 2px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+    .chip i { font-size: 0.7rem; }
+    .chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-glow); }
+    .chip.project { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+    .chip.project:hover { background: var(--accent); color: #fff; }
+    .pub-meta .sep { width: 1px; height: 14px; background: var(--border); margin: 0 0.15rem; }
 
     /* ===== BOOK ===== */
     .book-card {
       display: grid;
-      grid-template-columns: 155px 1fr;
+      grid-template-columns: 165px 1fr;
       gap: 2rem;
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      padding: 1.9rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
     .book-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 28px var(--accent-glow);
+      box-shadow: 0 14px 34px var(--accent-glow);
       border-color: var(--accent);
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 520px) {
       .book-card { grid-template-columns: 1fr; }
+      .book-cover { max-width: 180px; margin: 0 auto; }
     }
 
+    .book-cover { perspective: 900px; }
     .book-cover img {
       width: 100%;
-      border-radius: 8px;
-      box-shadow: 0 4px 14px var(--shadow);
+      border-radius: 4px 8px 8px 4px;
+      box-shadow: -6px 10px 24px var(--shadow), inset 4px 0 6px rgba(0,0,0,0.2);
       display: block;
+      transform: rotateY(-14deg);
+      transform-origin: left center;
+      transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
     }
+    .book-card:hover .book-cover img { transform: rotateY(0deg) scale(1.02); }
     .book-cover-placeholder {
       width: 100%;
       aspect-ratio: 2 / 3;
@@ -470,15 +849,17 @@
       color: var(--text-muted);
     }
 
-    .book-title  { font-size: 1.2rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.2rem; }
+    .book-title  { font-size: 1.25rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.2rem; }
     .book-author { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; font-style: italic; }
     .book-desc   { font-size: 0.91rem; color: var(--text); line-height: 1.65; margin-bottom: 1.25rem; }
 
     /* ===== CV ===== */
     .cv-inner {
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 2rem;
     }
 
@@ -486,9 +867,8 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
-      margin-top: 1.5rem;
     }
-    @media (max-width: 580px) { .cv-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .cv-grid { grid-template-columns: 1fr; } }
 
     .cv-group-title {
       font-size: 0.72rem;
@@ -503,12 +883,13 @@
       padding: 0.75rem 1rem;
       border-left: 3px solid var(--border);
       margin-bottom: 0.7rem;
-      border-radius: 0 6px 6px 0;
+      border-radius: 0 8px 8px 0;
       transition: all 0.2s ease;
     }
     .cv-item:hover {
       border-left-color: var(--accent);
       background: var(--bg-card-hover);
+      transform: translateX(3px);
     }
     .cv-item-title { font-weight: 600; font-size: 0.9rem; color: var(--text-heading); }
     .cv-item-sub   { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
@@ -520,45 +901,57 @@
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.5rem 1.2rem;
-      background: var(--accent);
+      padding: 0.55rem 1.25rem;
+      background: linear-gradient(100deg, var(--accent), var(--accent-2));
+      background-size: 160% auto;
       color: #fff !important;
-      border-radius: 8px;
+      border-radius: 999px;
       font-size: 0.875rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
     }
-    .btn:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 14px var(--accent-glow); }
+    .btn:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-glow); }
 
     /* ===== QUOTE ===== */
     .quote-section {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
     }
     .site-quote {
       font-family: 'Playfair Display', Georgia, serif;
       font-style: italic;
       font-weight: 300;
-      font-size: clamp(1rem, 2.2vw, 1.25rem);
-      color: var(--text-muted);
-      max-width: 640px;
+      font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+      color: var(--text);
+      max-width: 680px;
       margin: 0 auto;
-      line-height: 1.85;
+      line-height: 1.75;
       letter-spacing: 0.01em;
       border: none;
       padding: 0;
     }
+    .site-quote::before {
+      content: "\201C";
+      display: block;
+      font-size: 4.5rem;
+      line-height: 0.8;
+      margin-bottom: 0.2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
     .site-quote cite {
       display: block;
-      margin-top: 0.9rem;
-      font-size: 0.88rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
       font-style: normal;
       color: var(--text-muted);
       font-family: 'Inter', sans-serif;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     /* ===== DARE TO ACT ===== */
@@ -568,16 +961,18 @@
       gap: 2rem;
       align-items: start;
       background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
+      border-radius: 16px;
+      padding: 1.9rem;
       transition: all 0.3s ease;
     }
     .dta-card:hover {
       border-color: var(--accent);
-      box-shadow: 0 8px 28px var(--accent-glow);
+      box-shadow: 0 10px 30px var(--accent-glow);
     }
-    @media (max-width: 500px) {
+    @media (max-width: 520px) {
       .dta-card { grid-template-columns: 1fr; }
       .dta-logo { text-align: center; }
     }
@@ -601,7 +996,7 @@
       border-bottom: 1px solid var(--border);
       padding: 2rem 0;
       overflow: hidden;
-      background: var(--bg-secondary);
+      background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
     }
     .partners-label {
       text-align: center;
@@ -642,7 +1037,6 @@
 
     /* ===== FOOTER ===== */
     footer {
-      border-top: 1px solid var(--border);
       text-align: center;
       padding: 2rem 1rem;
       color: var(--text-muted);
@@ -651,18 +1045,33 @@
     }
 
     /* ===== MOBILE NAV ===== */
-    @media (max-width: 520px) {
+    @media (max-width: 640px) {
+      .navbar { padding: 0 1rem; }
       .navbar__right .nav-link-item { display: none; }
+      .container { padding: 3rem 1rem; }
+      .hero { min-height: auto; padding: 4rem 1rem 5rem; }
+      .hero__news { font-size: 0.8rem; text-align: left; }
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+      .js .reveal { opacity: 1; transform: none; }
+      .rotator { border-right: none; }
     }
   </style>
 </head>
 
 <body>
 
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
   <!-- ===== NAVBAR ===== -->
   <nav class="navbar">
-    <span class="navbar__name">Tobias Braun</span>
+    <a href="#top" class="navbar__name">Tobias Braun</a>
     <ul class="navbar__right">
+      <li class="nav-link-item"><a href="#news">News</a></li>
       <li class="nav-link-item"><a href="#about">About</a></li>
       <li class="nav-link-item"><a href="#publications">Publications</a></li>
       <li class="nav-link-item"><a href="#book">Book</a></li>
@@ -675,14 +1084,20 @@
         </button>
       </li>
     </ul>
+    <div class="scroll-progress" id="scroll-progress"></div>
   </nav>
 
   <!-- ===== HERO BANNER ===== -->
-  <section class="hero">
-    <h1>Tobias Braun</h1>
-    <p class="hero__subtitle">ELLIS PhD Candidate &nbsp;·&nbsp; Robust Multimodal Learning</p>
-    <p class="hero__tagline">ML Researcher, Educator, Author</p>
-    <div class="social-links">
+  <section class="hero" id="top">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+    <p class="hero__eyebrow reveal"><span class="dot"></span> TU Darmstadt &nbsp;×&nbsp; UCL</p>
+    <h1 class="reveal" style="--d: 0.08s">Tobias <span class="hero__accent">Braun</span></h1>
+    <p class="hero__subtitle reveal" style="--d: 0.16s">ELLIS PhD Candidate &nbsp;·&nbsp; Robust Multimodal Learning</p>
+    <p class="hero__tagline reveal" style="--d: 0.22s">
+      ML Researcher, Educator, Author. Working on <span class="rotator" id="rotator">AI security</span>
+    </p>
+    <div class="social-links reveal" style="--d: 0.3s">
       <a href="https://www.linkedin.com/in/tobias-braun-34a703166/" target="_blank" class="social-link">
         <i class="fab fa-linkedin"></i> LinkedIn
       </a>
@@ -699,25 +1114,114 @@
         <i class="fas fa-envelope"></i> tobias.braun(at)mai.tu-darmstadt.de
       </span>
     </div>
+
+    <a href="https://s2lab.org/U-Space/" target="_blank" class="hero__news reveal" style="--d: 0.4s">
+      <span class="pill">New</span>
+      <span>U-Space: Uncovering when and why uncertainty arises in language models</span>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+
+    <a href="#news" class="scroll-cue" aria-label="Scroll to news"><i class="fas fa-chevron-down"></i></a>
   </section>
 
   <main>
 
-    <!-- ===== ABOUT ME ===== -->
-    <section id="about">
+    <!-- ===== NEWS ===== -->
+    <section id="news">
       <div class="container">
-        <h2 class="section-title"><i class="fas fa-user"></i> About Me</h2>
+        <h2 class="section-title reveal"><i class="fas fa-bolt"></i> News</h2>
+        <ul class="news-list" id="news-list">
+          <li class="news-item hot reveal">
+            <span class="news-date">Oct 2026</span>
+            <div class="news-body">
+              <strong>U-Space is out!</strong> Our new preprint with UCL's Systems Security Lab finds a
+              low-dimensional subspace that makes a language model's evolving uncertainty measurable and
+              interpretable. It needs no correctness labels, repeated generations, or training.
+              <div class="news-links">
+                <a class="chip project" href="https://s2lab.org/U-Space/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2610.09087" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+                <a class="chip" href="https://github.com/s2labres/U-Space" target="_blank"><i class="fab fa-github"></i> Code</a>
+              </div>
+            </div>
+          </li>
+          <li class="news-item hot reveal">
+            <span class="news-date">Oct 2026</span>
+            <div class="news-body">
+              <strong>New preprint: The Poisoned Conversation.</strong> We show that a compromised unified
+              multimodal model can hide sensitive chat attributes in the images it generates later.
+              <div class="news-links">
+                <a class="chip project" href="https://jonasgrebe.github.io/research/projects/plw/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2610.05453" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+              </div>
+            </div>
+          </li>
+          <li class="news-item reveal">
+            <span class="news-date">Sep 2026</span>
+            <div class="news-body">
+              <strong>Token by Token, Compromised</strong> was accepted at <strong>NeurIPS 2026</strong>.
+              <div class="news-links">
+                <a class="chip project" href="https://jonasgrebe.github.io/research/projects/token-by-token/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2605.19227" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+              </div>
+            </div>
+          </li>
+          <li class="news-item news-extra">
+            <span class="news-date">Aug 2026</span>
+            <div class="news-body">
+              New preprint: <strong>Fighting Fire with Fire</strong>, on protecting exercises against AI cheating.
+              <div class="news-links">
+                <a class="chip project" href="https://jonasgrebe.github.io/research/projects/fighting-fire-with-fire/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2608.01112" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+              </div>
+            </div>
+          </li>
+          <li class="news-item news-extra">
+            <span class="news-date">Jul 2026</span>
+            <div class="news-body">
+              New preprint: <strong>VETO</strong>, a subtle image cloak that protects images from frontier AI editing.
+              <div class="news-links">
+                <a class="chip project" href="https://jonasgrebe.github.io/research/projects/veto/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2607.27292" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+              </div>
+            </div>
+          </li>
+          <li class="news-item news-extra">
+            <span class="news-date">Jun 2026</span>
+            <div class="news-body">
+              Started as a visiting researcher at UCL's Systems Security Lab with Prof. Lorenzo Cavallaro.
+            </div>
+          </li>
+          <li class="news-item news-extra">
+            <span class="news-date">Jun 2026</span>
+            <div class="news-body">
+              <strong>Obliviate</strong> was accepted at <strong>ECCV 2026</strong>.
+            </div>
+          </li>
+          <li class="news-item news-extra">
+            <span class="news-date">2026</span>
+            <div class="news-body">
+              Two papers at <strong>ICML 2026</strong>: <strong>GEM</strong> (Spotlight) and
+              <strong>Erased but Not Forgotten</strong>. I was also recognised as a Gold Reviewer.
+            </div>
+          </li>
+        </ul>
+        <button class="news-toggle" id="news-toggle" type="button">Show older news</button>
+      </div>
+    </section>
+
+    <!-- ===== ABOUT ME ===== -->
+    <section id="about" class="section-alt">
+      <div class="container">
+        <h2 class="section-title reveal"><i class="fas fa-user"></i> About Me</h2>
         <div class="about-grid">
 
           <!-- Photo column -->
-          <div class="about-photo">
-            <!--
-              Add your photo to the website folder as "photo.jpg".
-              The placeholder icon shows automatically if the file is missing.
-            -->
-            <img src="icml_nett-37418.JPG" alt="Tobias Braun"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="photo-placeholder"><i class="fas fa-user"></i></div>
+          <div class="about-photo reveal">
+            <div class="photo-frame">
+              <img src="photo.jpg" alt="Tobias Braun"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="photo-placeholder"><i class="fas fa-user"></i></div>
+            </div>
             <div class="about-meta">
               <span><i class="fas fa-map-marker-alt"></i> London, UK</span>
               <span><i class="fas fa-envelope"></i> tobias.braun(at)mai.tu-darmstadt.de</span>
@@ -725,15 +1229,15 @@
           </div>
 
           <!-- Text column -->
-          <div class="about-text">
+          <div class="about-text reveal" style="--d: 0.1s">
             <p>
               I am an <a href="https://ellis.eu/" target="_blank">ELLIS</a> PhD Candidate at the
               <a href="https://www.tu-darmstadt.de/" target="_blank">Technical University of Darmstadt</a>
               (Multimodal AI Lab, Prof. Marcus Rohrbach) and currently a visiting researcher at
               UCL's Systems Security Lab (Prof. Lorenzo Cavallaro). My research lies at the intersection
               of <strong>multimodal AI, robustness, and security</strong>. I am interested in understanding
-              how increasingly capable AI systems can fail, be manipulated, or behave unexpectedly —
-              and how we can design safeguards that make them more trustworthy and aligned with human interests.
+              how increasingly capable AI systems can fail, be manipulated, or behave unexpectedly.
+              I also want to design safeguards that make them more trustworthy and aligned with human interests.
             </p>
             <p>
               I hold an <strong>M.S. in Operations Research</strong> from
@@ -760,24 +1264,24 @@
         </div>
 
         <!-- Research interests -->
-        <p class="research-label">Research Interests</p>
+        <p class="research-label reveal">Research Interests</p>
         <div class="research-boxes">
-          <div class="research-box">
+          <div class="research-box spot reveal">
             <div class="research-box-icon"><i class="fas fa-shield-halved"></i></div>
             <div class="research-box-title">Robustness &amp; Security</div>
             <div class="research-box-desc">Adversarial attacks, backdoor defenses, and concept erasure in generative models</div>
           </div>
-          <div class="research-box">
+          <div class="research-box spot reveal" style="--d: 0.08s">
             <div class="research-box-icon"><i class="fas fa-eye"></i></div>
             <div class="research-box-title">Multimodal AI</div>
             <div class="research-box-desc">Cross-modal reasoning, vision-language models, and multimodal understanding</div>
           </div>
-          <div class="research-box">
+          <div class="research-box spot reveal" style="--d: 0.16s">
             <div class="research-box-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
             <div class="research-box-title">Fact-Checking</div>
             <div class="research-box-desc">Automated, evidence-based verification of claims using multimodal expert systems</div>
           </div>
-          <div class="research-box">
+          <div class="research-box spot reveal" style="--d: 0.24s">
             <div class="research-box-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
             <div class="research-box-title">Generative Models</div>
             <div class="research-box-desc">Rectified flows, diffusion models, and controlled generation under safety constraints</div>
@@ -789,11 +1293,11 @@
 
     <!-- ===== QUOTE ===== -->
     <section class="quote-section">
-      <div class="container" style="text-align: center; padding-top: 3rem; padding-bottom: 3rem;">
-        <blockquote class="site-quote">
-          &ldquo;The most beautiful things in the world cannot be seen or touched,
+      <div class="container" style="text-align: center; padding-top: 3.5rem; padding-bottom: 3.5rem;">
+        <blockquote class="site-quote reveal">
+          The most beautiful things in the world cannot be seen or touched,
           they are felt with the heart.&rdquo;
-          <cite>&mdash; Antoine de Saint-Exup&eacute;ry</cite>
+          <cite>Antoine de Saint-Exup&eacute;ry</cite>
         </blockquote>
       </div>
     </section>
@@ -801,52 +1305,151 @@
     <!-- ===== PUBLICATIONS ===== -->
     <section id="publications" class="section-alt">
       <div class="container">
-        <h2 class="section-title"><i class="fas fa-scroll"></i> Publications</h2>
+        <h2 class="section-title reveal"><i class="fas fa-scroll"></i> Publications</h2>
         <p class="pubs-sublabel" style="font-style: italic;">* Equal contribution</p>
 
         <div class="featured-publications">
-          <div class="pub-item">
+          <div class="featured-publication spot reveal">
+            <p class="pubs-sublabel">Spotlight</p>
             <div class="pub-title"><a href="https://arxiv.org/abs/2606.00140" target="_blank">Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</a></div>
             <div class="pub-authors">Grebe* &amp; Braun* et al. 2026</div>
-            <span class="badge badge-gold">⭐ Spotlight</span>
-            <span class="badge badge-blue">ICML 2026</span>
+            <div class="pub-meta">
+              <span class="badge badge-gold">⭐ Spotlight</span>
+              <span class="badge badge-blue">ICML 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/gem/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/GEM" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
           </div>
-          <div class="featured-publication">
-            <p class="pubs-sublabel">Latest Publication</p>
+          <div class="featured-publication spot reveal" style="--d: 0.1s">
+            <p class="pubs-sublabel">Latest Acceptance</p>
             <div class="pub-title"><a href="https://arxiv.org/abs/2605.19227" target="_blank">Token by Token, Compromised: Backdoor Vulnerabilities in Unified Autoregressive Models</a></div>
             <div class="pub-authors">Braun* &amp; Grebe* et al. 2026</div>
-            <span class="badge badge-blue">NeurIPS 2026</span>
+            <div class="pub-meta">
+              <span class="badge badge-blue">NeurIPS 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/token-by-token/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/ToBAC/" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
             <p class="latest-note">Accepted at NeurIPS 2026 with three clear Accepts from the reviewers. The paper presents a novel backdoor showing that unified models can poison themselves.</p>
           </div>
         </div>
 
-        <p class="pubs-sublabel">Earlier Publications</p>
-        <div class="publications-scroll">
-          <div class="pub-list">
-            <div class="pub-item">
-              <div class="pub-title"><a href="https://arxiv.org/abs/2504.21072" target="_blank">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</a></div>
-              <div class="pub-authors">Braun* &amp; Grebe* et al. 2026</div>
+        <div class="pub-head">
+          <p class="pubs-sublabel">All Publications</p>
+          <div class="pub-filter" role="group" aria-label="Filter publications">
+            <button type="button" class="active" data-filter="all">All</button>
+            <button type="button" data-filter="accepted">Peer-reviewed</button>
+            <button type="button" data-filter="preprint">Preprints</button>
+          </div>
+        </div>
+
+        <div class="pub-list" id="pub-list">
+          <div class="pub-item reveal" data-kind="preprint">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2610.09087" target="_blank">U-Space: Uncovering When and Why Uncertainty Arises in Language Models</a></div>
+            <div class="pub-authors">Braun et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gray">Preprint</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://s2lab.org/U-Space/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/s2labres/U-Space" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="preprint">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2610.05453" target="_blank">The Poisoned Conversation: Privacy-Leaking Watermarks in Unified Multimodal Models</a></div>
+            <div class="pub-authors">Braun* &amp; Grebe* et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gray">Preprint</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/plw/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="preprint">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2608.01112" target="_blank">Fighting Fire with Fire: On the Feasibility of Protecting Exercises Against AI Cheating</a></div>
+            <div class="pub-authors">Braun*, Grebe* &amp; Rethfeld* et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gray">Preprint</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/fighting-fire-with-fire/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="preprint">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2607.27292" target="_blank">VETO: Towards Protecting Images From Frontier AI Editing</a></div>
+            <div class="pub-authors">Grebe*, Shakibania* &amp; Braun et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gray">Preprint</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/veto/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://huggingface.co/spaces/Hossshakiba/VETO" target="_blank"><i class="fas fa-play"></i> Demo</a>
+              <a class="chip" href="https://huggingface.co/datasets/MAI-Lab/VetoBench" target="_blank"><i class="fas fa-database"></i> VetoBench</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2605.19227" target="_blank">Token by Token, Compromised: Backdoor Vulnerabilities in Unified Autoregressive Models</a></div>
+            <div class="pub-authors">Braun* &amp; Grebe* et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-blue">NeurIPS 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/token-by-token/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/ToBAC/" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2606.00140" target="_blank">Geometric Erasure by Contrastive Velocity Matching in Rectified Flows</a></div>
+            <div class="pub-authors">Grebe* &amp; Braun* et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gold">⭐ Spotlight</span>
               <span class="badge badge-blue">ICML 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/gem/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/GEM" target="_blank"><i class="fab fa-github"></i> Code</a>
             </div>
-            <div class="pub-item">
-              <div class="pub-title"><a href="https://arxiv.org/abs/2606.28643" target="_blank">Obliviate: Erasing Concepts from Autoregressive Image Generation Models</a></div>
-              <div class="pub-authors">Shakibania*, Grebe* &amp; Braun* et al. 2026</div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2504.21072" target="_blank">Erased but Not Forgotten: How Backdoors Compromise Concept Erasure</a></div>
+            <div class="pub-authors">Braun* &amp; Grebe* et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-blue">ICML 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/erased-but-not-forgotten/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/EEB" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2606.28643" target="_blank">Obliviate: Erasing Concepts from Autoregressive Image Generation Models</a></div>
+            <div class="pub-authors">Shakibania*, Grebe* &amp; Braun* et al. 2026</div>
+            <div class="pub-meta">
               <span class="badge badge-blue">ECCV 2026</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/obliviate/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/Obliviate" target="_blank"><i class="fab fa-github"></i> Code</a>
             </div>
-            <div class="pub-item">
-              <div class="pub-title"><a href="https://arxiv.org/abs/2603.04064" target="_blank">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</a></div>
-              <div class="pub-authors">Chen et al. 2026</div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2603.04064" target="_blank">Tuning Just Enough: Lightweight Backdoor Attacks on Multi-Encoder Diffusion Models</a></div>
+            <div class="pub-authors">Chen et al. 2026</div>
+            <div class="pub-meta">
               <span class="badge badge-blue">EMNLP 2026 Findings</span>
             </div>
-            <div class="pub-item">
-              <div class="pub-title"><a href="https://arxiv.org/abs/2412.10510" target="_blank">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</a></div>
-              <div class="pub-authors">Braun* &amp; Rothermel* et al. 2025</div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2412.10510" target="_blank">DEFAME: Dynamic Evidence-based Fact-checking with Multimodal Experts</a></div>
+            <div class="pub-authors">Braun* &amp; Rothermel* et al. 2025</div>
+            <div class="pub-meta">
               <span class="badge badge-blue">ICML 2025</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/defame/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/DEFAME" target="_blank"><i class="fab fa-github"></i> Code</a>
             </div>
-            <div class="pub-item">
-              <div class="pub-title"><a href="https://aclanthology.org/2024.fever-1.12/" target="_blank">InFact: A Strong Baseline for Automated Fact-Checking</a></div>
-              <div class="pub-authors">Rothermel* &amp; Braun* et al. 2024</div>
+          </div>
+          <div class="pub-item reveal" data-kind="accepted">
+            <div class="pub-title"><a href="https://aclanthology.org/2024.fever-1.12/" target="_blank">InFact: A Strong Baseline for Automated Fact-Checking</a></div>
+            <div class="pub-authors">Rothermel* &amp; Braun* et al. 2024</div>
+            <div class="pub-meta">
               <span class="badge badge-blue">FEVER 2024 Workshop</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://jonasgrebe.github.io/research/projects/infact/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/DEFAME/tree/v1.0.0" target="_blank"><i class="fab fa-github"></i> Code</a>
             </div>
           </div>
         </div>
@@ -860,16 +1463,11 @@
     <!-- ===== BOOK ===== -->
     <section id="book">
       <div class="container">
-        <h2 class="section-title"><i class="fas fa-book-open"></i> Book</h2>
-        <div class="book-card">
+        <h2 class="section-title reveal"><i class="fas fa-book-open"></i> Book</h2>
+        <div class="book-card spot reveal">
 
           <!-- Book cover -->
           <div class="book-cover">
-            <!--
-              Add your book cover image as "book_cover.jpg" in the website folder,
-              or replace the src with a direct image URL.
-              The placeholder shows automatically if the file is missing.
-            -->
             <img src="bowilu_cover.png" alt="Bold, Wise &amp; Lucky book cover"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <div class="book-cover-placeholder"><i class="fas fa-book"></i></div>
@@ -880,13 +1478,10 @@
             <div class="book-title">Bold, Wise &amp; Lucky</div>
             <div class="book-author">by Gyp Brown</div>
             <div class="book-desc">
-              <!--
-                DRAFT — please revise this description to match your vision for the book.
-              -->
               What separates those who act from those who wait? <em>Bold, Wise &amp; Lucky</em> is a
-              reflection on the forces that shape an unconventional life — the courage to make bold moves,
-              the discipline to build genuine wisdom, and the readiness to recognise luck when it arrives.
-              Written under the pen name Gyp Brown, the book blends personal narrative with honest
+              reflection on the forces that shape an unconventional life. It explores the courage to make
+              bold moves, the discipline to build genuine wisdom, and the readiness to recognise luck when
+              it arrives. Written under the pen name Gyp Brown, the book blends personal narrative with honest
               observations about ambition, risk, and the pursuit of a life lived on one's own terms.
             </div>
             <a href="https://www.amazon.com/Bold-Wise-Lucky-Gyp-Brown/dp/B0BSJLLPZC"
@@ -902,27 +1497,27 @@
     <!-- ===== CURRICULUM VITAE ===== -->
     <section id="cv" class="section-alt">
       <div class="container">
-        <h2 class="section-title"><i class="fas fa-file-lines"></i> Curriculum Vitae</h2>
-        <div class="cv-inner">
+        <h2 class="section-title reveal"><i class="fas fa-file-lines"></i> Curriculum Vitae</h2>
+        <div class="cv-inner reveal">
           <div class="cv-grid">
 
             <!-- Education -->
             <div>
               <div class="cv-group-title">Education</div>
               <div class="cv-item">
-                <div class="cv-item-title">PhD — TU Darmstadt (ELLIS Candidate)</div>
+                <div class="cv-item-title">PhD, TU Darmstadt (ELLIS Candidate)</div>
                 <div class="cv-item-sub">Multimodal AI Lab · Mar 2024 – present</div>
               </div>
               <div class="cv-item">
-                <div class="cv-item-title">Visiting Researcher — UCL</div>
+                <div class="cv-item-title">Visiting Researcher, UCL</div>
                 <div class="cv-item-sub">Systems Security Lab · Jun 2026 – present</div>
               </div>
               <div class="cv-item">
-                <div class="cv-item-title">M.S. Operations Research — Columbia University</div>
+                <div class="cv-item-title">M.S. Operations Research, Columbia University</div>
                 <div class="cv-item-sub">GPA 3.9 / 4.0 · Aug 2018 – Dec 2019</div>
               </div>
               <div class="cv-item">
-                <div class="cv-item-title">B.S. Industrial Engineering — KIT</div>
+                <div class="cv-item-title">B.S. Industrial Engineering, KIT</div>
                 <div class="cv-item-sub">Top 5%, with distinction · Sep 2014 – Aug 2017</div>
               </div>
             </div>
@@ -931,7 +1526,7 @@
             <div>
               <div class="cv-group-title">Experience &amp; Service</div>
               <div class="cv-item">
-                <div class="cv-item-title">Research &amp; Teaching — TU Darmstadt</div>
+                <div class="cv-item-title">Research &amp; Teaching, TU Darmstadt</div>
                 <div class="cv-item-sub">Stat. ML course (500+ students) · Mar 2024 – present</div>
               </div>
               <div class="cv-item">
@@ -939,11 +1534,11 @@
                 <div class="cv-item-sub">60+ AI workshops across industries · Sep 2020 – today</div>
               </div>
               <div class="cv-item">
-                <div class="cv-item-title">Research Intern — Columbia × Facebook</div>
+                <div class="cv-item-title">Research Intern, Columbia × Facebook</div>
                 <div class="cv-item-sub">NLP &amp; SQL query analysis · Jun – Aug 2020</div>
               </div>
               <div class="cv-item">
-                <div class="cv-item-title">Gold Reviewer — ICML 2026</div>
+                <div class="cv-item-title">Gold Reviewer, ICML 2026</div>
                 <div class="cv-item-sub">Top reviewer recognition</div>
               </div>
             </div>
@@ -951,9 +1546,6 @@
           </div>
 
           <div class="cv-download">
-            <!--
-              Add your CV PDF to the website folder as "cv.pdf" and update the href below.
-            -->
             <a href="2026_06_Braun.pdf" target="_blank" class="btn">
               <i class="fas fa-download"></i> Download Full CV (PDF)
             </a>
@@ -965,12 +1557,12 @@
     <!-- ===== DARE TO ACT ===== -->
     <section id="daretoact">
       <div class="container">
-        <h2 class="section-title"><i class="fas fa-water"></i> Dare To Act</h2>
-        <div class="dta-card">
+        <h2 class="section-title reveal"><i class="fas fa-water"></i> Dare To Act</h2>
+        <div class="dta-card spot reveal">
           <div class="dta-logo">
             <a href="https://www.daretoact.org/" target="_blank">
               <img src="daretoact_logo_compressed.jpg" alt="Dare To Act logo"
-                   style="width: 80px; border-radius: 8px;"
+                   style="width: 80px; border-radius: 10px;"
                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
               <i class="fas fa-globe" style="display:none; font-size: 3.5rem; color: var(--accent);"></i>
             </a>
@@ -1020,7 +1612,6 @@
       </div>
     </section>
 
-
   </main>
 
   <!-- ===== FOOTER ===== -->
@@ -1032,13 +1623,215 @@
 
   <!-- ===== SCRIPTS ===== -->
   <script>
-    // Dark / light mode toggle
-    document.getElementById('theme-toggle').addEventListener('click', function () {
-      var html = document.documentElement;
-      var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+    (function () {
+      var root = document.documentElement;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Dark / light mode toggle
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        if (window.__heroRecolor) window.__heroRecolor();
+      });
+
+      // Scroll reveal
+      var reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { revealObs.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add('visible'); });
+      }
+
+      // Scroll progress bar
+      var bar = document.getElementById('scroll-progress');
+      function onScroll() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = 'scaleX(' + (max > 0 ? window.scrollY / max : 0) + ')';
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Highlight the nav link of the section in view
+      var navLinks = document.querySelectorAll('.navbar__right a[href^="#"]');
+      if ('IntersectionObserver' in window) {
+        var navObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            navLinks.forEach(function (a) {
+              a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+            });
+          });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        navLinks.forEach(function (a) {
+          var sec = document.querySelector(a.getAttribute('href'));
+          if (sec) navObs.observe(sec);
+        });
+      }
+
+      // Cursor spotlight on cards
+      document.querySelectorAll('.spot').forEach(function (el) {
+        el.addEventListener('pointermove', function (ev) {
+          var r = el.getBoundingClientRect();
+          el.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+          el.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+        });
+      });
+
+      // News: show older items
+      var newsList = document.getElementById('news-list');
+      var newsToggle = document.getElementById('news-toggle');
+      newsToggle.addEventListener('click', function () {
+        var open = newsList.classList.toggle('expanded');
+        newsToggle.textContent = open ? 'Show less' : 'Show older news';
+      });
+
+      // Publication filter
+      var pubItems = document.querySelectorAll('#pub-list .pub-item');
+      document.querySelectorAll('.pub-filter button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.pub-filter button').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var f = btn.getAttribute('data-filter');
+          pubItems.forEach(function (it) {
+            it.classList.toggle('hidden', f !== 'all' && it.getAttribute('data-kind') !== f);
+            it.classList.add('visible');
+          });
+        });
+      });
+
+      // Rotating research keywords in the hero
+      var rot = document.getElementById('rotator');
+      var words = ['AI security', 'robust multimodal learning', 'uncertainty in language models', 'safe generative models', 'fact-checking'];
+      if (rot && !reduceMotion) {
+        var wi = 0, ci = words[0].length, deleting = true;
+        function tick() {
+          var w = words[wi];
+          if (deleting) {
+            ci--;
+            if (ci <= 0) { deleting = false; wi = (wi + 1) % words.length; w = words[wi]; }
+          } else {
+            ci++;
+          }
+          rot.textContent = words[wi].slice(0, Math.max(ci, 0));
+          var delay = deleting ? 35 : 70;
+          if (!deleting && ci >= words[wi].length) { deleting = true; delay = 2200; }
+          setTimeout(tick, delay);
+        }
+        setTimeout(tick, 2200);
+      }
+
+      // Hero constellation: drifting nodes that connect and lean towards the cursor
+      var canvas = document.getElementById('hero-canvas');
+      var hero = document.querySelector('.hero');
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext('2d');
+      var w = 0, h = 0, nodes = [], rgb = '96, 165, 250';
+      var mouse = { x: -9999, y: -9999 };
+      var visible = true, rafId = null;
+
+      function recolor() {
+        rgb = getComputedStyle(root).getPropertyValue('--particle').trim() || rgb;
+        if (reduceMotion) draw();
+      }
+      window.__heroRecolor = recolor;
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var r = canvas.getBoundingClientRect();
+        w = r.width; h = r.height;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var n = Math.round(Math.min(95, Math.max(28, (w * h) / 13000)));
+        nodes = [];
+        for (var i = 0; i < n; i++) {
+          nodes.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            vx: (Math.random() - 0.5) * 0.28,
+            vy: (Math.random() - 0.5) * 0.28,
+            r: Math.random() * 1.6 + 0.7
+          });
+        }
+        draw();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        var link = Math.min(140, Math.max(90, w / 10));
+        for (var i = 0; i < nodes.length; i++) {
+          var a = nodes[i];
+          for (var j = i + 1; j < nodes.length; j++) {
+            var b = nodes[j];
+            var dx = a.x - b.x, dy = a.y - b.y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < link) {
+              ctx.strokeStyle = 'rgba(' + rgb + ',' + ((1 - d / link) * 0.32).toFixed(3) + ')';
+              ctx.lineWidth = 0.7;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            }
+          }
+          var mdx = a.x - mouse.x, mdy = a.y - mouse.y;
+          var md = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (md < 190) {
+            ctx.strokeStyle = 'rgba(' + rgb + ',' + ((1 - md / 190) * 0.55).toFixed(3) + ')';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+          }
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (md < 190 ? 0.95 : 0.7) + ')';
+          ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      function step() {
+        for (var i = 0; i < nodes.length; i++) {
+          var p = nodes[i];
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > w) p.vx *= -1;
+          if (p.y < 0 || p.y > h) p.vy *= -1;
+          var dx = mouse.x - p.x, dy = mouse.y - p.y;
+          if (dx * dx + dy * dy < 160 * 160) { p.x += dx * 0.003; p.y += dy * 0.003; }
+        }
+        draw();
+        rafId = visible ? requestAnimationFrame(step) : null;
+      }
+
+      hero.addEventListener('pointermove', function (ev) {
+        var r = canvas.getBoundingClientRect();
+        mouse.x = ev.clientX - r.left; mouse.y = ev.clientY - r.top;
+        if (reduceMotion) draw();
+      });
+      hero.addEventListener('pointerleave', function () {
+        mouse.x = -9999; mouse.y = -9999;
+        if (reduceMotion) draw();
+      });
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
+      });
+
+      recolor();
+      resize();
+
+      if (!reduceMotion) {
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (entries) {
+            visible = entries[0].isIntersecting;
+            if (visible && !rafId) rafId = requestAnimationFrame(step);
+          }).observe(hero);
+        } else {
+          rafId = requestAnimationFrame(step);
+        }
+      }
+    })();
   </script>
 
 </body>
