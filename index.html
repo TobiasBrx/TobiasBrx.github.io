@@ -1013,15 +1013,22 @@
     }
     .partners-track {
       display: flex;
-      align-items: center;
-      gap: 3.5rem;
       width: max-content;
-      animation: marquee 22s linear infinite;
     }
-    .partners-track:hover { animation-play-state: paused; }
+    /* Each group is at least as wide as the viewport, so the loop never runs dry */
+    .partners-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 3.5rem;
+      padding-right: 3.5rem;
+      min-width: 100vw;
+      flex-shrink: 0;
+      animation: marquee 30s linear infinite;
+    }
     @keyframes marquee {
       0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      100% { transform: translateX(-100%); }
     }
     .partner-logo {
       height: 44px;
@@ -1350,7 +1357,7 @@
         <div class="pub-list" id="pub-list">
           <div class="pub-item reveal" data-kind="preprint">
             <div class="pub-title"><a href="https://arxiv.org/abs/2610.09087" target="_blank">U-Space: Uncovering When and Why Uncertainty Arises in Language Models</a></div>
-            <div class="pub-authors">Braun et al. 2026</div>
+            <div class="pub-authors">Braun* &amp; Loose* et al. 2026</div>
             <div class="pub-meta">
               <span class="badge badge-gray">Preprint</span>
               <span class="sep"></span>
@@ -1598,20 +1605,23 @@
       <div class="partners-label">Selected workshop &amp; consulting partners</div>
       <div class="partners-track-wrapper">
         <div class="partners-track">
-          <!-- set 1 -->
-          <img src="workshop_partners/FIS.jpeg"                       class="partner-logo" alt="FIS">
-          <img src="workshop_partners/blackmountain.png"              class="partner-logo" alt="Black Mountain">
-          <img src="workshop_partners/garp.png"                       class="partner-logo" alt="GARP">
-          <img src="workshop_partners/phorms.png"                     class="partner-logo" alt="Phorms">
-          <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
-          <img src="workshop_partners/atlas_metrics.jpeg"             class="partner-logo" alt="Atlas Metrics">
-          <!-- set 2 (duplicate for seamless loop) -->
-          <img src="workshop_partners/FIS.jpeg"                       class="partner-logo" alt="FIS">
-          <img src="workshop_partners/blackmountain.png"              class="partner-logo" alt="Black Mountain">
-          <img src="workshop_partners/garp.png"                       class="partner-logo" alt="GARP">
-          <img src="workshop_partners/phorms.png"                     class="partner-logo" alt="Phorms">
-          <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
-          <img src="workshop_partners/atlas_metrics.jpeg"             class="partner-logo" alt="Atlas Metrics">
+          <div class="partners-group">
+            <img src="workshop_partners/FIS.jpeg"                           class="partner-logo" alt="FIS">
+            <img src="workshop_partners/blackmountain.png"                  class="partner-logo" alt="Black Mountain">
+            <img src="workshop_partners/garp.png"                           class="partner-logo" alt="GARP">
+            <img src="workshop_partners/phorms.png"                         class="partner-logo" alt="Phorms">
+            <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
+            <img src="workshop_partners/atlas_metrics.jpeg"                 class="partner-logo" alt="Atlas Metrics">
+          </div>
+          <!-- identical copy for a seamless loop -->
+          <div class="partners-group" aria-hidden="true">
+            <img src="workshop_partners/FIS.jpeg"                           class="partner-logo" alt="FIS">
+            <img src="workshop_partners/blackmountain.png"                  class="partner-logo" alt="Black Mountain">
+            <img src="workshop_partners/garp.png"                           class="partner-logo" alt="GARP">
+            <img src="workshop_partners/phorms.png"                         class="partner-logo" alt="Phorms">
+            <img src="workshop_partners/rae_ulrich_weber_partner_logo.jpeg" class="partner-logo" alt="Rae Ulrich Weber">
+            <img src="workshop_partners/atlas_metrics.jpeg"                 class="partner-logo" alt="Atlas Metrics">
+          </div>
         </div>
       </div>
     </section>
