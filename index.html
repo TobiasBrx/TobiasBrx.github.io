@@ -134,6 +134,16 @@
       100% { transform: translate(-4vmax, 8vmax) scale(0.95); }
     }
 
+    /* Starfield behind the whole page: a slow journey through space that speeds up while scrolling */
+    #space-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
     /* ===== NAVBAR ===== */
     .navbar {
       position: sticky;
@@ -1071,6 +1081,7 @@
 <body>
 
   <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <canvas id="space-canvas" aria-hidden="true"></canvas>
 
   <!-- ===== NAVBAR ===== -->
   <nav class="navbar">
@@ -1120,9 +1131,9 @@
       </span>
     </div>
 
-    <a href="https://s2lab.org/U-Space/" target="_blank" class="hero__news reveal" style="--d: 0.4s">
+    <a href="https://multimodal-ai-lab.github.io/V-lens/" target="_blank" class="hero__news reveal" style="--d: 0.4s">
       <span class="pill">New</span>
-      <span>U-Space: Uncovering when and why uncertainty arises in language models</span>
+      <span>The Elephant in the Question: Unified models picture the concepts behind their answers</span>
       <i class="fas fa-arrow-right"></i>
     </a>
 
@@ -1136,6 +1147,19 @@
       <div class="container">
         <h2 class="section-title reveal"><i class="fas fa-bolt"></i> News</h2>
         <ul class="news-list" id="news-list">
+          <li class="news-item hot reveal">
+            <span class="news-date">Nov 2026</span>
+            <div class="news-body">
+              <strong>New preprint: The Elephant in the Question.</strong> We introduce the V-lens, which uses a
+              unified model's own image generator to picture its hidden states. The pictures reveal intermediate
+              concepts that connect a question to its answer, even when the model never names them.
+              <div class="news-links">
+                <a class="chip project" href="https://multimodal-ai-lab.github.io/V-lens/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+                <a class="chip" href="https://arxiv.org/abs/2611.24793" target="_blank"><i class="fas fa-file-lines"></i> arXiv</a>
+                <a class="chip" href="https://github.com/multimodal-ai-lab/V-lens" target="_blank"><i class="fab fa-github"></i> Code</a>
+              </div>
+            </div>
+          </li>
           <li class="news-item hot reveal">
             <span class="news-date">Oct 2026</span>
             <div class="news-body">
@@ -1163,7 +1187,7 @@
               </div>
             </div>
           </li>
-          <li class="news-item reveal">
+          <li class="news-item news-extra">
             <span class="news-date">Sep 2026</span>
             <div class="news-body">
               <strong>Token by Token, Compromised</strong> was accepted at <strong>NeurIPS 2026</strong>.
@@ -1353,6 +1377,16 @@
         </div>
 
         <div class="pub-list" id="pub-list">
+          <div class="pub-item reveal" data-kind="preprint">
+            <div class="pub-title"><a href="https://arxiv.org/abs/2611.24793" target="_blank">The Elephant in the Question: Unified Models Picture the Concepts Behind Their Answers</a></div>
+            <div class="pub-authors">Braun et al. 2026</div>
+            <div class="pub-meta">
+              <span class="badge badge-gray">Preprint</span>
+              <span class="sep"></span>
+              <a class="chip project" href="https://multimodal-ai-lab.github.io/V-lens/" target="_blank"><i class="fas fa-globe"></i> Project</a>
+              <a class="chip" href="https://github.com/multimodal-ai-lab/V-lens" target="_blank"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
           <div class="pub-item reveal" data-kind="preprint">
             <div class="pub-title"><a href="https://arxiv.org/abs/2610.09087" target="_blank">U-Space: Uncovering When and Why Uncertainty Arises in Language Models</a></div>
             <div class="pub-authors">Braun* &amp; Loose* et al. 2026</div>
@@ -1647,6 +1681,7 @@
         root.setAttribute('data-theme', next);
         try { localStorage.setItem('theme', next); } catch (e) {}
         if (window.__heroRecolor) window.__heroRecolor();
+        if (window.__spaceRecolor) window.__spaceRecolor();
       });
 
       // Scroll reveal
@@ -1845,6 +1880,366 @@
           rafId = requestAnimationFrame(step);
         }
       }
+    })();
+
+    // Starfield: a slow, continuous flight through space behind the whole page. Scrolling down speeds
+    // the flight up (stars stretch into streaks), scrolling up flies backwards; the field turns slowly.
+    (function () {
+      var canvas = document.getElementById('space-canvas');
+      if (!canvas || !canvas.getContext) return;
+      var root = document.documentElement;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var ctx = canvas.getContext('2d');
+      var w = 0, h = 0, focal = 0, stars = [];
+      var tints = ['96, 165, 250', '34, 211, 238', '226, 232, 240'], alphaMax = 0.75, nebula = 0.07, travel = 0;
+      var BASE = 0.045, DEPTH = 1.6;   // cruising speed (depth units per second) and depth of the field
+      var speed = BASE, angle = 0, lastY = window.scrollY, last = performance.now(), rafId = null;
+      var rocks = [], dust = [], nextRock = 1 + Math.random() * 2, rockAlpha = 0.3;
+      var rockPal = { base: '100, 116, 139', hi: '176, 190, 208', lo: '30, 41, 59', shade: '2, 6, 23' };
+
+      function recolor() {
+        var light = root.getAttribute('data-theme') === 'light';
+        tints = light ? ['37, 99, 235', '8, 145, 178', '71, 85, 105'] : ['96, 165, 250', '34, 211, 238', '226, 232, 240'];
+        alphaMax = light ? 0.5 : 0.8;
+        nebula = light ? 0.05 : 0.07;
+        rockPal = light ? { base: '120, 134, 156', hi: '203, 213, 225', lo: '51, 65, 85', shade: '15, 23, 42' }
+                        : { base: '100, 116, 139', hi: '176, 190, 208', lo: '30, 41, 59', shade: '2, 6, 23' };
+        rockAlpha = light ? 0.24 : 0.3;
+        for (var q = 0; q < rocks.length; q++) rocks[q].sprite = null;   // re-texture in the new palette
+        if (reduceMotion) draw(0);
+      }
+      window.__spaceRecolor = recolor;
+
+      function spawn(star, far) {
+        star.x = (Math.random() * 2 - 1) * 1.2;
+        star.y = (Math.random() * 2 - 1) * 1.2;
+        star.z = far ? DEPTH * (0.85 + Math.random() * 0.15) : 0.05 + Math.random() * DEPTH;
+        star.r = 0.35 + Math.random() * 0.9;
+        star.c = Math.random() < 0.55 ? 0 : (Math.random() < 0.6 ? 1 : 2);
+        star.px = null;
+        return star;
+      }
+
+      // an irregular rock: a rough two-level outline, craters, cracks and grain, entering from a random edge
+      function makeRock(o) {
+        o = o || {};
+        var r = o.r || 8 + Math.pow(Math.random(), 1.8) * 32, n = 12 + Math.floor(Math.min(1, r / 30) * 6 + Math.random() * 6), pts = [];
+        var lobes = 2 + Math.floor(Math.random() * 3), lobePh = Math.random() * 6.28;
+        for (var i = 0; i < n; i++) {
+          var a = (i / n) * Math.PI * 2;
+          // coarse lumps from a few lobes, fine chips from per-vertex jitter
+          var rad = r * (0.8 + 0.14 * Math.sin(a * lobes + lobePh) + (Math.random() - 0.5) * 0.18);
+          pts.push([Math.cos(a) * rad, Math.sin(a) * rad]);
+        }
+        var craters = [], nc = 2 + Math.floor(Math.random() * 4);
+        for (var c = 0; c < nc; c++) {
+          var ca = Math.random() * Math.PI * 2, cd = Math.sqrt(Math.random()) * r * 0.55;
+          craters.push([Math.cos(ca) * cd, Math.sin(ca) * cd, r * (0.07 + Math.pow(Math.random(), 1.5) * 0.2)]);
+        }
+        var fromLeft = Math.random() < 0.5, pace = (7 + Math.random() * 14) * (0.6 + r / 40);
+        var rock = {
+          x: fromLeft ? -r * 2 : w + r * 2,
+          y: h * (0.08 + Math.random() * 0.84),
+          vx: (fromLeft ? 1 : -1) * pace,
+          vy: (Math.random() - 0.5) * pace * 0.5,
+          rot: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.35,
+          r: r, pts: pts, craters: craters, seed: Math.random() * 1e6, sprite: null, age: 0
+        };
+        for (var key in o) rock[key] = o[key];
+        return rock;
+      }
+
+      function rockPath(c, pts) {
+        c.beginPath();
+        for (var j = 0; j < pts.length; j++) {
+          if (j === 0) c.moveTo(pts[j][0], pts[j][1]); else c.lineTo(pts[j][0], pts[j][1]);
+        }
+        c.closePath();
+      }
+
+      // the rock's surface (albedo, grain, craters, cracks), drawn once into its own small canvas
+      function texture(k) {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2), size = Math.ceil(k.r * 2.4);
+        var cv = document.createElement('canvas');
+        cv.width = cv.height = Math.ceil(size * dpr);
+        var c = cv.getContext('2d');
+        c.setTransform(dpr, 0, 0, dpr, size / 2 * dpr, size / 2 * dpr);
+        var sd = k.seed;
+        function rnd() { sd = (sd * 16807) % 2147483647; return sd / 2147483647; }
+        rockPath(c, k.pts);
+        c.fillStyle = 'rgb(' + rockPal.base + ')';
+        c.fill();
+        c.save();
+        c.clip();
+        // grain: many tiny chips, lighter and darker than the base
+        var grains = Math.round(k.r * k.r * 1.1);
+        for (var g = 0; g < grains; g++) {
+          var gx = (rnd() * 2 - 1) * k.r, gy = (rnd() * 2 - 1) * k.r, gs = 0.5 + rnd() * 1.3;
+          c.fillStyle = 'rgba(' + (rnd() < 0.5 ? rockPal.hi : rockPal.lo) + ',' + (0.25 + rnd() * 0.4).toFixed(2) + ')';
+          c.fillRect(gx, gy, gs, gs);
+        }
+        // a few broad darker patches so the surface is not uniform
+        for (var p = 0; p < 3; p++) {
+          var px = (rnd() * 2 - 1) * k.r * 0.6, py = (rnd() * 2 - 1) * k.r * 0.6, pr = k.r * (0.3 + rnd() * 0.4);
+          var pg = c.createRadialGradient(px, py, 0, px, py, pr);
+          pg.addColorStop(0, 'rgba(' + rockPal.lo + ',0.35)');
+          pg.addColorStop(1, 'rgba(' + rockPal.lo + ',0)');
+          c.fillStyle = pg;
+          c.fillRect(-k.r * 1.2, -k.r * 1.2, k.r * 2.4, k.r * 2.4);
+        }
+        // craters: dark hollow, shadowed upper-left wall, lit lower-right wall
+        for (var q = 0; q < k.craters.length; q++) {
+          var cr = k.craters[q], cg = c.createRadialGradient(cr[0] - cr[2] * 0.25, cr[1] - cr[2] * 0.25, 0, cr[0], cr[1], cr[2]);
+          cg.addColorStop(0, 'rgba(' + rockPal.shade + ',0.75)');
+          cg.addColorStop(1, 'rgba(' + rockPal.lo + ',0.35)');
+          c.fillStyle = cg;
+          c.beginPath(); c.arc(cr[0], cr[1], cr[2], 0, Math.PI * 2); c.fill();
+          c.lineWidth = Math.max(0.6, cr[2] * 0.22);
+          c.strokeStyle = 'rgba(' + rockPal.hi + ',0.8)';
+          c.beginPath(); c.arc(cr[0], cr[1], cr[2], -Math.PI * 0.15, Math.PI * 0.65); c.stroke();
+          c.strokeStyle = 'rgba(' + rockPal.shade + ',0.55)';
+          c.beginPath(); c.arc(cr[0], cr[1], cr[2], Math.PI * 0.85, Math.PI * 1.65); c.stroke();
+        }
+        // hairline cracks
+        c.strokeStyle = 'rgba(' + rockPal.shade + ',0.5)';
+        c.lineWidth = 0.6;
+        var cracks = 1 + Math.floor(rnd() * 3);
+        for (var f = 0; f < cracks; f++) {
+          var fx = (rnd() * 2 - 1) * k.r * 0.6, fy = (rnd() * 2 - 1) * k.r * 0.6, fa = rnd() * Math.PI * 2;
+          c.beginPath(); c.moveTo(fx, fy);
+          for (var st = 0; st < 4; st++) {
+            fa += (rnd() - 0.5) * 1.2;
+            fx += Math.cos(fa) * k.r * 0.18; fy += Math.sin(fa) * k.r * 0.18;
+            c.lineTo(fx, fy);
+          }
+          c.stroke();
+        }
+        c.restore();
+        // chipped edge
+        rockPath(c, k.pts);
+        c.strokeStyle = 'rgba(' + rockPal.hi + ',0.55)';
+        c.lineWidth = 0.7;
+        c.stroke();
+        k.sprite = cv; k.spriteSize = size;
+      }
+
+      function drawRocks() {
+        for (var i = 0; i < rocks.length; i++) {
+          var k = rocks[i];
+          if (!k.sprite) texture(k);
+          ctx.save();
+          ctx.globalAlpha = rockAlpha * (0.65 + 0.35 * Math.min(1, k.r / 40));   // bigger rocks look closer
+          ctx.translate(k.x, k.y);
+          ctx.rotate(k.rot);
+          ctx.drawImage(k.sprite, -k.spriteSize / 2, -k.spriteSize / 2, k.spriteSize, k.spriteSize);
+          // sunlight from the upper left of the screen, fixed while the rock tumbles
+          rockPath(ctx, k.pts);
+          ctx.clip();
+          ctx.rotate(-k.rot);
+          var lg = ctx.createLinearGradient(-k.r * 0.8, -k.r * 0.8, k.r * 0.9, k.r * 0.9);
+          lg.addColorStop(0, 'rgba(' + rockPal.hi + ',0.45)');
+          lg.addColorStop(0.45, 'rgba(' + rockPal.hi + ',0)');
+          lg.addColorStop(0.6, 'rgba(' + rockPal.shade + ',0)');
+          lg.addColorStop(1, 'rgba(' + rockPal.shade + ',0.75)');
+          ctx.fillStyle = lg;
+          ctx.fillRect(-k.r * 1.3, -k.r * 1.3, k.r * 2.6, k.r * 2.6);
+          ctx.restore();
+        }
+      }
+
+      // a new rock, sometimes sent on a course that crosses a rock already in view
+      function spawnRock() {
+        var k = makeRock(), t = rocks.length ? rocks[Math.floor(Math.random() * rocks.length)] : null;
+        if (t && Math.random() < 0.4 && Math.abs(t.vx) > 1) {
+          var fromLeft = t.vx < 0;                       // come from the side the target is heading to
+          k.x = fromLeft ? -k.r * 2 : w + k.r * 2;
+          k.vx = (fromLeft ? 1 : -1) * Math.abs(k.vx);
+          var T = (k.x - t.x) / (t.vx - k.vx);           // time until both reach the same x
+          if (T > 2 && T < 60) k.y = t.y + (t.vy - k.vy) * T;
+        }
+        rocks.push(k);
+      }
+
+      // a rock breaks into 2 to 4 pieces sharing its area, flying apart from the impact
+      function shatter(k, nx, ny) {
+        var parts = 2 + Math.floor(Math.random() * (k.r > 22 ? 3 : 2)), weights = [], sum = 0;
+        for (var i = 0; i < parts; i++) { weights.push(0.4 + Math.random()); sum += weights[i]; }
+        for (var p = 0; p < parts; p++) {
+          var pr = k.r * Math.sqrt(weights[p] / sum) * 0.92;
+          var a = Math.atan2(-ny, -nx) + (Math.random() - 0.5) * 2.4;   // mostly away from the other rock
+          var kick = 8 + Math.random() * 18;
+          rocks.push(makeRock({
+            r: pr,
+            x: k.x + Math.cos(a) * k.r * 0.4, y: k.y + Math.sin(a) * k.r * 0.4,
+            vx: k.vx + Math.cos(a) * kick, vy: k.vy + Math.sin(a) * kick,
+            rot: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 1.4, age: 0
+          }));
+        }
+        for (var d = 0; d < 10 + Math.floor(k.r / 2); d++) {
+          var da = Math.random() * Math.PI * 2, dv = 15 + Math.random() * 40;
+          dust.push({ x: k.x, y: k.y, vx: k.vx + Math.cos(da) * dv, vy: k.vy + Math.sin(da) * dv,
+                      life: 1.5 + Math.random() * 2.5, max: 4, s: 0.6 + Math.random() * 1.1 });
+        }
+      }
+
+      // elastic bounce between rocks (mass ~ area); a hard enough hit breaks the bigger pieces
+      function collide() {
+        for (var i = 0; i < rocks.length; i++) {
+          for (var j = i + 1; j < rocks.length; j++) {
+            var a = rocks[i], b = rocks[j];
+            if (a.age < 0.4 || b.age < 0.4) continue;    // fresh fragments first separate
+            var dx = b.x - a.x, dy = b.y - a.y, rr = (a.r + b.r) * 0.82, d2 = dx * dx + dy * dy;
+            if (d2 >= rr * rr || d2 === 0) continue;
+            var d = Math.sqrt(d2), nx = dx / d, ny = dy / d;
+            var vrel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+            var ma = a.r * a.r, mb = b.r * b.r;
+            // push apart so they do not overlap
+            var push = (rr - d) / (ma + mb);
+            a.x -= nx * push * mb; a.y -= ny * push * mb; b.x += nx * push * ma; b.y += ny * push * ma;
+            if (vrel <= 0) continue;                     // already moving apart
+            a.vx -= (2 * mb / (ma + mb)) * vrel * nx; a.vy -= (2 * mb / (ma + mb)) * vrel * ny;
+            b.vx += (2 * ma / (ma + mb)) * vrel * nx; b.vy += (2 * ma / (ma + mb)) * vrel * ny;
+            a.spin += (Math.random() - 0.5) * vrel * 0.03; b.spin -= (Math.random() - 0.5) * vrel * 0.03;
+            if (vrel > 10 && rocks.length < 16) {
+              var broken = [];
+              if (a.r > 9) broken.push([a, nx, ny]);
+              if (b.r > 9) broken.push([b, -nx, -ny]);
+              if (broken.length) {
+                for (var q = 0; q < broken.length; q++) rocks.splice(rocks.indexOf(broken[q][0]), 1);
+                for (var q2 = 0; q2 < broken.length; q2++) shatter(broken[q2][0], broken[q2][1], broken[q2][2]);
+                return;                                  // the list changed; continue next frame
+              }
+            }
+          }
+        }
+      }
+
+      function moveRocks(dt, scrollV) {
+        nextRock -= dt;
+        if (nextRock <= 0) {
+          if (rocks.length < 5) spawnRock();
+          nextRock = 3 + Math.random() * 6;
+        }
+        for (var i = rocks.length - 1; i >= 0; i--) {
+          var k = rocks[i];
+          k.age += dt;
+          k.x += k.vx * dt;
+          k.y += k.vy * dt - scrollV * dt * 0.05 * (k.r / 39);   // parallax with the page
+          k.rot += k.spin * dt;
+          k.spin *= 1 - dt * 0.05;
+          if (k.x < -k.r * 3 || k.x > w + k.r * 3 || k.y < -h * 0.5 || k.y > h * 1.5) rocks.splice(i, 1);
+        }
+        collide();
+        for (var e = dust.length - 1; e >= 0; e--) {
+          var p = dust[e];
+          p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 1 - dt * 0.6; p.vy *= 1 - dt * 0.6;
+          p.life -= dt;
+          if (p.life <= 0) dust.splice(e, 1);
+        }
+      }
+
+      function drawDust() {
+        for (var e = 0; e < dust.length; e++) {
+          var p = dust[e];
+          ctx.fillStyle = 'rgba(' + rockPal.hi + ',' + (rockAlpha * 1.6 * Math.min(1, p.life / 1.5)).toFixed(3) + ')';
+          ctx.fillRect(p.x, p.y, p.s, p.s);
+        }
+      }
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = window.innerWidth; h = window.innerHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        focal = Math.max(w, h) * 0.5;
+        var n = Math.round(Math.min(460, Math.max(160, (w * h) / 3200)));
+        while (stars.length < n) stars.push(spawn({}, false));
+        stars.length = n;
+        draw(0);
+      }
+
+      function draw(dz) {
+        ctx.clearRect(0, 0, w, h);
+        // the vanishing point drifts a little with the reading position
+        var max = Math.max(1, document.documentElement.scrollHeight - h);
+        var cx = w * 0.5, cy = h * (0.42 + 0.16 * (window.scrollY / max));
+        var cos = Math.cos(angle), sin = Math.sin(angle);
+        var streak = Math.min(1, Math.abs(speed - BASE) / 0.5);
+        // nebulae: soft clouds orbiting the vanishing point, swelling slowly as the flight goes on
+        for (var k = 0; k < 3; k++) {
+          var ph = angle * (k % 2 ? -1.6 : 1.3) + k * 2.1;
+          var pulse = 0.5 + 0.5 * Math.sin(travel * 0.35 + k * 1.7);
+          var nx = cx + Math.cos(ph) * w * (0.22 + 0.08 * k), ny = cy + Math.sin(ph) * h * (0.18 + 0.06 * k);
+          var nr = Math.max(w, h) * (0.28 + 0.12 * pulse);
+          var g = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+          g.addColorStop(0, 'rgba(' + tints[k % 2] + ',' + (nebula * (0.6 + 0.4 * pulse)).toFixed(3) + ')');
+          g.addColorStop(1, 'rgba(' + tints[k % 2] + ',0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, w, h);
+        }
+        ctx.lineCap = 'round';
+        for (var i = 0; i < stars.length; i++) {
+          var st = stars[i];
+          var rx = st.x * cos - st.y * sin, ry = st.x * sin + st.y * cos;
+          var sx = cx + (rx / st.z) * focal, sy = cy + (ry / st.z) * focal;
+          if (sx < -40 || sx > w + 40 || sy < -40 || sy > h + 40) { st.px = null; continue; }
+          var near = 1 - st.z / DEPTH;                       // 0 far away, 1 close
+          var a = alphaMax * (0.16 + 0.84 * Math.pow(near, 1.4));
+          var col = 'rgba(' + tints[st.c] + ',' + a.toFixed(3) + ')';
+          var size = st.r * (0.55 + near * 1.9);
+          if (streak > 0.05 && st.px !== null) {
+            // light-speed streak from where the star was a moment ago
+            ctx.strokeStyle = col;
+            ctx.lineWidth = size;
+            ctx.beginPath();
+            ctx.moveTo(sx + (st.px - sx) * (1 + streak * 9), sy + (st.py - sy) * (1 + streak * 9));
+            ctx.lineTo(sx, sy);
+            ctx.stroke();
+          } else {
+            ctx.fillStyle = col;
+            ctx.beginPath(); ctx.arc(sx, sy, size, 0, Math.PI * 2); ctx.fill();
+          }
+          st.px = sx; st.py = sy;
+        }
+        drawRocks();
+        drawDust();
+      }
+
+      function frame(now) {
+        var dt = Math.min(0.05, (now - last) / 1000); last = now;
+        // scroll velocity (px per second) becomes extra speed, forwards or backwards
+        var y = window.scrollY, v = (y - lastY) / Math.max(dt, 0.001); lastY = y;
+        var target = BASE + Math.max(-1.4, Math.min(1.4, v * 0.0012));
+        speed += (target - speed) * Math.min(1, dt * 3.5);
+        angle += dt * 0.012;
+        var dz = speed * dt;
+        travel += dz;
+        for (var i = 0; i < stars.length; i++) {
+          var st = stars[i];
+          st.z -= dz;
+          if (st.z < 0.04) spawn(st, true);
+          else if (st.z > DEPTH) { spawn(st, false); st.z = 0.06 + Math.random() * 0.2; }
+        }
+        moveRocks(dt, v);
+        draw(dz);
+        rafId = document.hidden ? null : requestAnimationFrame(frame);
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && !rafId && !reduceMotion) { last = performance.now(); lastY = window.scrollY; rafId = requestAnimationFrame(frame); }
+      });
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
+      });
+      if (reduceMotion) window.addEventListener('scroll', function () { draw(0); }, { passive: true });
+
+      recolor();
+      resize();
+      if (!reduceMotion) rafId = requestAnimationFrame(frame);
     })();
   </script>
 
