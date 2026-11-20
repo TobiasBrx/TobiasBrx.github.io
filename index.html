@@ -1920,6 +1920,139 @@
                      th: 0.022 + Math.random() * 0.03, c: b % 3, sp: (Math.random() < 0.5 ? -1 : 1) * (0.004 + Math.random() * 0.006),
                      ox: (Math.random() - 0.5) * 0.5, oy: Math.random() < 0.5 ? -1 : 1 });
       }
+      // rare mystic visitors: a flickering wisp, sometimes wearing a tilted halo, slips across the sky on a
+      // wavering path and keeps fading out of sight. If one crosses the dusk star it sets off a cosmic ripple:
+      // the star flares, rings of light run outwards, the stars around them bend and the asteroids get shoved.
+      var mystic = null, cosmic = null, nextMystic = 15 + Math.random() * 25;
+      function hsla(hu, sa, li, a) { return 'hsla(' + (((hu % 360) + 360) % 360).toFixed(0) + ', ' + sa + '%, ' + li + '%, ' + Math.max(0, a).toFixed(3) + ')'; }
+      function sunPos() { return { x: w * 0.42, y: h * (1.12 - 0.36 * dusk) }; }
+      function edgePoint(side) {
+        if (side === 0) return { x: -60, y: Math.random() * h };
+        if (side === 1) return { x: w + 60, y: Math.random() * h };
+        if (side === 2) return { x: Math.random() * w, y: -60 };
+        return { x: Math.random() * w, y: h + 60 };
+      }
+      function spawnMystic() {
+        var side = Math.floor(Math.random() * 4), S = edgePoint(side), E = edgePoint(side ^ 1);
+        var C = { x: w * (0.2 + Math.random() * 0.6), y: h * (0.15 + Math.random() * 0.7) }, sp = sunPos(), aim = false;
+        if (dusk > 0.35 && sp.y < h * 0.95 && Math.random() < 0.45) {
+          C = { x: 2 * sp.x - 0.5 * (S.x + E.x), y: 2 * sp.y - 0.5 * (S.y + E.y) };   // a course through the star
+          aim = true;
+        }
+        mystic = { S: S, C: C, E: E, t: 0, T: 4 + Math.random() * 3.5, kind: Math.random() < 0.6 ? 0 : 1,
+                   hue: 170 + Math.random() * 70, ph: Math.random() * 6.28, wob: 14 + Math.random() * 26,
+                   size: 6 + Math.random() * 5, trail: [], fade: 1, absorbed: false, aim: aim };
+      }
+      function moveMystic(dt) {
+        if (cosmic) {
+          cosmic.t += dt;
+          var cp = sunPos(), rr = cosmic.t * Math.max(w, h) * 0.42, left = 1 - cosmic.t / cosmic.dur;
+          for (var i = 0; i < rocks.length; i++) {          // the first ring shoves the asteroids outwards
+            var k = rocks[i];
+            if (k.shove === cosmic.id) continue;
+            var dx = k.x - cp.x, dy = k.y - cp.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+            if (d < rr) {
+              var kick = 40 * left * Math.min(2, 24 / Math.max(8, k.r));
+              k.vx += dx / d * kick; k.vy += dy / d * kick; k.spin += (Math.random() - 0.5) * 0.8 * left;
+              k.shove = cosmic.id;
+            }
+          }
+          if (cosmic.t > cosmic.dur) cosmic = null;
+        }
+        if (!mystic) {
+          nextMystic -= dt;
+          if (nextMystic <= 0 && w > 0) { spawnMystic(); nextMystic = 30 + Math.random() * 45; }
+          return;
+        }
+        var m = mystic;
+        m.t += dt;
+        if (m.absorbed) {                                    // drawn into the star
+          m.fade -= dt * 2.2;
+          var ap = sunPos();
+          m.trail.unshift({ x: m.trail[0].x + (ap.x - m.trail[0].x) * Math.min(1, dt * 8), y: m.trail[0].y + (ap.y - m.trail[0].y) * Math.min(1, dt * 8) });
+          if (m.trail.length > 28) m.trail.pop();
+          if (m.fade <= 0) mystic = null;
+          return;
+        }
+        var u = m.t / m.T;
+        if (u >= 1) { mystic = null; return; }
+        var iu = 1 - u;
+        var x = iu * iu * m.S.x + 2 * iu * u * m.C.x + u * u * m.E.x, y = iu * iu * m.S.y + 2 * iu * u * m.C.y + u * u * m.E.y;
+        var tx = 2 * iu * (m.C.x - m.S.x) + 2 * u * (m.E.x - m.C.x), ty = 2 * iu * (m.C.y - m.S.y) + 2 * u * (m.E.y - m.C.y);
+        var tl = Math.sqrt(tx * tx + ty * ty) || 1;
+        var wv = Math.sin(m.t * 2.3 + m.ph) * m.wob + Math.sin(m.t * 5.1 + 2 * m.ph) * m.wob * 0.3;
+        if (m.aim) wv *= Math.min(1, Math.abs(u - 0.5) * 4);   // steadies as it nears the star
+        x += -ty / tl * wv; y += tx / tl * wv;
+        m.trail.unshift({ x: x, y: y });
+        if (m.trail.length > 28) m.trail.pop();
+        var sp = sunPos();
+        if (dusk > 0.3 && !cosmic && Math.abs(x - sp.x) < 60 && Math.abs(y - sp.y) < 60 &&
+            Math.sqrt((x - sp.x) * (x - sp.x) + (y - sp.y) * (y - sp.y)) < 26 + m.size * 2) {
+          m.absorbed = true;
+          cosmic = { t: 0, dur: 4.5, hue: m.hue, id: Math.random() };
+        }
+      }
+      function drawMystic() {
+        var m = mystic;
+        if (!m || !m.trail.length) return;
+        var base = light ? 0.5 : 0.72, A;
+        if (m.absorbed) A = base * Math.max(0, m.fade);
+        else {
+          var env = Math.pow(Math.sin(Math.PI * Math.min(1, m.t / m.T)), 0.6);
+          var flick = 0.55 + 0.45 * Math.sin(m.t * 11 + m.ph) * Math.sin(m.t * 4.7 + 1.3 * m.ph);
+          if (Math.sin(m.t * 1.7 + m.ph) > 0.8) flick *= 0.12;      // slips out of sight now and then
+          A = base * env * flick;
+        }
+        if (A < 0.004) return;
+        ctx.save();
+        if (!light) ctx.globalCompositeOperation = 'lighter';
+        var L = light ? 50 : 68, hue = m.hue + m.t * 40;
+        for (var i = m.trail.length - 1; i > 0; i--) {           // a trail of beads drifting through the hues
+          var p = m.trail[i], f = 1 - i / m.trail.length;
+          ctx.fillStyle = hsla(hue + i * 5, 85, L, A * 0.35 * f * f);
+          ctx.beginPath(); ctx.arc(p.x, p.y, m.size * (0.25 + 0.6 * f), 0, Math.PI * 2); ctx.fill();
+        }
+        var x = m.trail[0].x, y = m.trail[0].y, r = m.size * (m.absorbed ? Math.max(0.2, m.fade) : 1);
+        var g = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+        g.addColorStop(0, hsla(hue, 90, light ? 62 : 90, A));
+        g.addColorStop(0.3, hsla(hue, 85, L, A * 0.5));
+        g.addColorStop(1, hsla(hue, 85, L, 0));
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, Math.PI * 2); ctx.fill();
+        if (m.kind === 1) {                                       // a tilted halo turning around it
+          ctx.translate(x, y); ctx.rotate(m.t * 0.9 + m.ph); ctx.scale(1, 0.35);
+          ctx.strokeStyle = hsla(hue + 60, 80, L, A * 0.7);
+          ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.arc(0, 0, r * 2.6, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.restore();
+      }
+      function drawCosmic(sx, sy) {
+        var c = cosmic;
+        if (!c) return;
+        var R = Math.max(w, h), fade = Math.max(0, 1 - c.t / c.dur);
+        ctx.save();
+        if (!light) ctx.globalCompositeOperation = 'lighter';
+        for (var k = 0; k < 3; k++) {                            // rings of light running outwards
+          var tt = c.t - k * 0.35;
+          if (tt <= 0) continue;
+          ctx.strokeStyle = hsla(c.hue + k * 70 + c.t * 30, 85, light ? 55 : 72, (light ? 0.2 : 0.28) * Math.pow(fade, 1.5) * (1 - k * 0.25));
+          ctx.lineWidth = 2 + 10 * fade * (1 - k * 0.3);
+          ctx.beginPath(); ctx.arc(sx, sy, tt * R * 0.42, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.translate(sx, sy);                                   // a brief iridescent corona
+        var cor = Math.min(1, c.t * 3) * Math.pow(fade, 2);
+        for (var i = 0; i < 18; i++) {
+          var a = c.t * 0.25 + i * Math.PI / 9 + Math.sin(i * 3.7) * 0.15;
+          var len = R * (0.14 + 0.1 * ((i * 7) % 5) / 5) * (0.6 + 0.4 * Math.min(1, c.t * 2)), wd = 0.05;
+          var rg = ctx.createRadialGradient(0, 0, 0, 0, 0, len);
+          rg.addColorStop(0, hsla(c.hue + i * 20, 85, light ? 58 : 72, (light ? 0.14 : 0.2) * cor));
+          rg.addColorStop(1, hsla(c.hue + i * 20, 85, light ? 58 : 72, 0));
+          ctx.fillStyle = rg;
+          ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, len, a - wd, a + wd); ctx.closePath(); ctx.fill();
+        }
+        ctx.restore();
+      }
       function rgba(c, a) { return 'rgba(' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + Math.max(0, a).toFixed(3) + ')'; }
       function mixRGB(a, b, t) {
         return Math.round(a[0] + (b[0] - a[0]) * t) + ', ' + Math.round(a[1] + (b[1] - a[1]) * t) + ', ' + Math.round(a[2] + (b[2] - a[2]) * t);
@@ -2239,11 +2372,12 @@
       function drawStar(e, x, y) {
         var P = duskPal, R = Math.max(w, h);
         var tw = 0.88 + 0.12 * Math.sin(clock * 1.3) * Math.sin(clock * 0.71 + 1);   // gentle shimmer
+        var boost = cosmic ? 1 + 1.6 * Math.exp(-cosmic.t * 1.1) * Math.min(1, cosmic.t * 6) : 1;   // flare
         ctx.save();
         if (!light) ctx.globalCompositeOperation = 'lighter';
         var g = ctx.createRadialGradient(x, y, 0, x, y, R * 0.65);
-        g.addColorStop(0, rgba(P.glow, P.glowA * e * tw));
-        g.addColorStop(0.1, rgba(P.glow, P.glowA * 0.5 * e));
+        g.addColorStop(0, rgba(P.glow, P.glowA * e * tw * boost));
+        g.addColorStop(0.1, rgba(P.glow, P.glowA * 0.5 * e * boost));
         g.addColorStop(0.38, rgba(P.halo, P.glowA * 0.18 * e));
         g.addColorStop(1, rgba(P.halo, 0));
         ctx.fillStyle = g;
@@ -2258,7 +2392,7 @@
           ctx.fillStyle = rg;
           ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, len, a - wd, a + wd); ctx.closePath(); ctx.fill();
         }
-        var cr = (2.4 + 1.1 * tw) * Math.min(1.5, Math.max(1, w / 900));
+        var cr = (2.4 + 1.1 * tw) * Math.min(1.5, Math.max(1, w / 900)) * Math.sqrt(boost);
         var core = ctx.createRadialGradient(0, 0, 0, 0, 0, cr * 7);
         core.addColorStop(0, rgba(P.core, 0.95 * e));
         core.addColorStop(0.16, rgba(P.core, 0.75 * e));
@@ -2266,7 +2400,7 @@
         core.addColorStop(1, rgba(P.glow, 0));
         ctx.fillStyle = core;
         ctx.beginPath(); ctx.arc(0, 0, cr * 7, 0, Math.PI * 2); ctx.fill();
-        var spikes = [[R * 0.2 * tw, cr * 0.7, 0.5], [R * 0.06 * tw, cr * 0.5, 0.35]];
+        var spikes = [[R * 0.2 * tw * boost, cr * 0.7, 0.5], [R * 0.06 * tw * boost, cr * 0.5, 0.35]];
         for (var s = 0; s < 2; s++) {
           var Ls = spikes[s][0], Ts = spikes[s][1];
           ctx.save();
@@ -2311,11 +2445,21 @@
           ctx.fillRect(0, 0, w, h);
         }
         if (e > 0.003) drawStar(e, sunX, sunY);
+        if (cosmic) drawCosmic(sunX, sunY);
+        // during a cosmic ripple the stars near the first ring bend outwards
+        var lens = cosmic ? { r: cosmic.t * Math.max(w, h) * 0.42, band: 70, amp: 10 * (1 - cosmic.t / cosmic.dur) } : null;
         ctx.lineCap = 'round';
         for (var i = 0; i < stars.length; i++) {
           var st = stars[i];
           var rx = st.x * cos - st.y * sin, ry = st.x * sin + st.y * cos;
           var sx = cx + (rx / st.z) * focal, sy = cy + (ry / st.z) * focal;
+          if (lens) {
+            var lx = sx - sunX, ly = sy - sunY, ld = Math.sqrt(lx * lx + ly * ly) || 1, off = ld - lens.r;
+            if (off > -lens.band && off < lens.band) {
+              var push = lens.amp * Math.cos(off / lens.band * Math.PI / 2);
+              sx += lx / ld * push; sy += ly / ld * push;
+            }
+          }
           if (sx < -40 || sx > w + 40 || sy < -40 || sy > h + 40) { st.px = null; continue; }
           var near = 1 - st.z / DEPTH;                       // 0 far away, 1 close
           var a = alphaMax * (0.16 + 0.84 * Math.pow(near, 1.4));
@@ -2335,6 +2479,7 @@
           }
           st.px = sx; st.py = sy;
         }
+        drawMystic();
         drawRocks();
         drawDust();
       }
@@ -2357,6 +2502,7 @@
           else if (st.z > DEPTH) { spawn(st, false); st.z = 0.06 + Math.random() * 0.2; }
         }
         moveRocks(dt, v);
+        moveMystic(dt);
         draw(dz);
         rafId = document.hidden ? null : requestAnimationFrame(frame);
       }
