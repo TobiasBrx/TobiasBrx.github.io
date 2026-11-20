@@ -116,6 +116,7 @@
       pointer-events: none;
       overflow: hidden;
     }
+    .aurora { opacity: calc(1 - 0.6 * var(--dusk, 0)); }
     .aurora span {
       position: absolute;
       width: 60vmax;
@@ -404,7 +405,7 @@
     }
 
     .section-alt {
-      background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+      background: color-mix(in srgb, var(--bg-secondary) calc(70% - 35% * var(--dusk, 0)), transparent);   /* thins out at dusk so the sky runs through */
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
@@ -1004,7 +1005,7 @@
       border-bottom: 1px solid var(--border);
       padding: 2rem 0;
       overflow: hidden;
-      background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+      background: color-mix(in srgb, var(--bg-secondary) calc(70% - 35% * var(--dusk, 0)), transparent);   /* thins out at dusk so the sky runs through */
     }
     .partners-label {
       text-align: center;
@@ -1895,11 +1896,46 @@
       var BASE = 0.045, DEPTH = 1.6;   // cruising speed (depth units per second) and depth of the field
       var speed = BASE, angle = 0, lastY = window.scrollY, last = performance.now(), rafId = null;
       var rocks = [], dust = [], nextRock = 1 + Math.random() * 2, rockAlpha = 0.3;
-      var rockPal = { base: '100, 116, 139', hi: '176, 190, 208', lo: '30, 41, 59', shade: '2, 6, 23' };
+      var rockPal = { base: '100, 116, 139', hi: '176, 190, 208', lo: '30, 41, 59', shade: '2, 6, 23' }, rockHi = rockPal.hi;
+
+      // dusk: towards the bottom of the page the sky drifts into the sunset of "The Bold, the Wise & the Lucky",
+      // and the flight heads for a distant star that lights it
+      var dusk = 0, clock = 0, light = false, auroraDusk = -1;
+      var coolTints = [[96, 165, 250], [34, 211, 238], [226, 232, 240]], warmTints = [[253, 186, 116], [251, 146, 60], [254, 240, 200]];
+      var DUSK_DARK = {
+        sky: [[70, 12, 34], [150, 30, 32], [226, 84, 30], [250, 166, 60]], skyA: [0.15, 0.22, 0.26, 0.3],
+        band: [[178, 34, 34], [234, 88, 12], [120, 20, 44]], bandA: 0.13,
+        olive: [176, 170, 60], oliveA: 0.07,
+        core: [255, 248, 228], glow: [253, 200, 110], halo: [240, 110, 40], glowA: 0.34, rayA: 0.05
+      };
+      var DUSK_LIGHT = {
+        sky: [[244, 114, 140], [251, 146, 60], [253, 186, 116], [252, 211, 77]], skyA: [0.08, 0.13, 0.19, 0.25],
+        band: [[244, 63, 94], [249, 115, 22], [251, 146, 60]], bandA: 0.09,
+        olive: [163, 163, 60], oliveA: 0.05,
+        core: [255, 236, 170], glow: [251, 160, 60], halo: [244, 114, 96], glowA: 0.26, rayA: 0.045
+      };
+      var duskPal = DUSK_DARK, bands = [];
+      for (var b = 0; b < 6; b++) {
+        bands.push({ y: 0.52 + b * 0.075 + Math.random() * 0.04, x: Math.random() * 1.6, len: 0.45 + Math.random() * 0.5,
+                     th: 0.022 + Math.random() * 0.03, c: b % 3, sp: (Math.random() < 0.5 ? -1 : 1) * (0.004 + Math.random() * 0.006),
+                     ox: (Math.random() - 0.5) * 0.5, oy: Math.random() < 0.5 ? -1 : 1 });
+      }
+      function rgba(c, a) { return 'rgba(' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + Math.max(0, a).toFixed(3) + ')'; }
+      function mixRGB(a, b, t) {
+        return Math.round(a[0] + (b[0] - a[0]) * t) + ', ' + Math.round(a[1] + (b[1] - a[1]) * t) + ', ' + Math.round(a[2] + (b[2] - a[2]) * t);
+      }
+      function duskTarget() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        if (max < 1) return 0;
+        var t = Math.max(0, Math.min(1, (window.scrollY / max - 0.3) / 0.7));
+        return t * t * (3 - 2 * t);
+      }
 
       function recolor() {
-        var light = root.getAttribute('data-theme') === 'light';
-        tints = light ? ['37, 99, 235', '8, 145, 178', '71, 85, 105'] : ['96, 165, 250', '34, 211, 238', '226, 232, 240'];
+        light = root.getAttribute('data-theme') === 'light';
+        coolTints = light ? [[37, 99, 235], [8, 145, 178], [71, 85, 105]] : [[96, 165, 250], [34, 211, 238], [226, 232, 240]];
+        warmTints = light ? [[217, 119, 6], [234, 88, 12], [154, 52, 18]] : [[253, 186, 116], [251, 146, 60], [254, 240, 200]];
+        duskPal = light ? DUSK_LIGHT : DUSK_DARK;
         alphaMax = light ? 0.5 : 0.8;
         nebula = light ? 0.05 : 0.07;
         rockPal = light ? { base: '120, 134, 156', hi: '203, 213, 225', lo: '51, 65, 85', shade: '15, 23, 42' }
@@ -2038,8 +2074,8 @@
           ctx.clip();
           ctx.rotate(-k.rot);
           var lg = ctx.createLinearGradient(-k.r * 0.8, -k.r * 0.8, k.r * 0.9, k.r * 0.9);
-          lg.addColorStop(0, 'rgba(' + rockPal.hi + ',0.45)');
-          lg.addColorStop(0.45, 'rgba(' + rockPal.hi + ',0)');
+          lg.addColorStop(0, 'rgba(' + rockHi + ',0.45)');
+          lg.addColorStop(0.45, 'rgba(' + rockHi + ',0)');
           lg.addColorStop(0.6, 'rgba(' + rockPal.shade + ',0)');
           lg.addColorStop(1, 'rgba(' + rockPal.shade + ',0.75)');
           ctx.fillStyle = lg;
@@ -2160,11 +2196,106 @@
         draw(0);
       }
 
+      // the sunset sky: a warm wash rising from the bottom, an olive haze up right and painted cloud streaks
+      function drawSky(e) {
+        var P = duskPal;
+        var g = ctx.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, rgba(P.sky[0], 0));
+        g.addColorStop(0.35, rgba(P.sky[0], P.skyA[0] * e));
+        g.addColorStop(0.62, rgba(P.sky[1], P.skyA[1] * e));
+        g.addColorStop(0.84, rgba(P.sky[2], P.skyA[2] * e));
+        g.addColorStop(1, rgba(P.sky[3], P.skyA[3] * e));
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+        var R = Math.max(w, h);
+        var o = ctx.createRadialGradient(w * 0.86, h * 0.06, 0, w * 0.86, h * 0.06, R * 0.45);
+        o.addColorStop(0, rgba(P.olive, P.oliveA * e));
+        o.addColorStop(1, rgba(P.olive, 0));
+        ctx.fillStyle = o;
+        ctx.fillRect(0, 0, w, h);
+        for (var i = 0; i < bands.length; i++) {
+          var bd = bands[i];
+          var bx = (((bd.x + clock * bd.sp) % 1.6) + 1.6) % 1.6 - 0.3;   // wraps around, slowly
+          var by = bd.y * h + (1 - e) * h * 0.12;                        // settles into place as the dusk comes
+          var len = bd.len * w, th = Math.max(6, bd.th * h);
+          for (var j = 0; j < 2; j++) {                                   // two overlapping strokes per streak
+            var L = j ? len * 0.6 : len, T = j ? th * 0.7 : th;
+            var c = P.band[(bd.c + j) % 3], a = P.bandA * e * (j ? 0.7 : 1);
+            ctx.save();
+            ctx.translate(bx * w + (j ? bd.ox * len : 0), by + (j ? bd.oy * th * 0.6 : 0));
+            ctx.scale(1, T / L);
+            var cg = ctx.createRadialGradient(0, 0, 0, 0, 0, L / 2);
+            cg.addColorStop(0, rgba(c, a));
+            cg.addColorStop(0.55, rgba(c, a * 0.45));
+            cg.addColorStop(1, rgba(c, 0));
+            ctx.fillStyle = cg;
+            ctx.beginPath(); ctx.arc(0, 0, L / 2, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+
+      // a distant star that lights the dusk: wide warm glow, faint slow rays, a small core with a long glint
+      function drawStar(e, x, y) {
+        var P = duskPal, R = Math.max(w, h);
+        var tw = 0.88 + 0.12 * Math.sin(clock * 1.3) * Math.sin(clock * 0.71 + 1);   // gentle shimmer
+        ctx.save();
+        if (!light) ctx.globalCompositeOperation = 'lighter';
+        var g = ctx.createRadialGradient(x, y, 0, x, y, R * 0.65);
+        g.addColorStop(0, rgba(P.glow, P.glowA * e * tw));
+        g.addColorStop(0.1, rgba(P.glow, P.glowA * 0.5 * e));
+        g.addColorStop(0.38, rgba(P.halo, P.glowA * 0.18 * e));
+        g.addColorStop(1, rgba(P.halo, 0));
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+        ctx.translate(x, y);
+        for (var i = 0; i < 12; i++) {
+          var a = clock * 0.01 + i * Math.PI / 6 + Math.sin(i * 7.3) * 0.22;
+          var len = R * (0.32 + 0.028 * ((i * 37) % 10)), wd = 0.03 + 0.005 * ((i * 13) % 5);
+          var rg = ctx.createRadialGradient(0, 0, 0, 0, 0, len);
+          rg.addColorStop(0, rgba(P.glow, P.rayA * e * (0.6 + 0.4 * Math.sin(clock * 0.2 + i * 1.9))));
+          rg.addColorStop(1, rgba(P.glow, 0));
+          ctx.fillStyle = rg;
+          ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, len, a - wd, a + wd); ctx.closePath(); ctx.fill();
+        }
+        var cr = (2.4 + 1.1 * tw) * Math.min(1.5, Math.max(1, w / 900));
+        var core = ctx.createRadialGradient(0, 0, 0, 0, 0, cr * 7);
+        core.addColorStop(0, rgba(P.core, 0.95 * e));
+        core.addColorStop(0.16, rgba(P.core, 0.75 * e));
+        core.addColorStop(0.45, rgba(P.glow, 0.28 * e));
+        core.addColorStop(1, rgba(P.glow, 0));
+        ctx.fillStyle = core;
+        ctx.beginPath(); ctx.arc(0, 0, cr * 7, 0, Math.PI * 2); ctx.fill();
+        var spikes = [[R * 0.2 * tw, cr * 0.7, 0.5], [R * 0.06 * tw, cr * 0.5, 0.35]];
+        for (var s = 0; s < 2; s++) {
+          var Ls = spikes[s][0], Ts = spikes[s][1];
+          ctx.save();
+          if (s) ctx.rotate(Math.PI / 2);
+          var sg = ctx.createLinearGradient(-Ls, 0, Ls, 0);
+          sg.addColorStop(0, rgba(P.core, 0));
+          sg.addColorStop(0.5, rgba(P.core, spikes[s][2] * e));
+          sg.addColorStop(1, rgba(P.core, 0));
+          ctx.fillStyle = sg;
+          ctx.fillRect(-Ls, -Ts / 2, 2 * Ls, Ts);
+          ctx.restore();
+        }
+        ctx.restore();
+      }
+
       function draw(dz) {
         ctx.clearRect(0, 0, w, h);
-        // the vanishing point drifts a little with the reading position
+        var e = dusk;
+        if (Math.abs(e - auroraDusk) > 0.01) { auroraDusk = e; root.style.setProperty('--dusk', e.toFixed(3)); }
+        // stars, nebulae and rock light warm up with the dusk
+        for (var t = 0; t < 3; t++) tints[t] = mixRGB(coolTints[t], warmTints[t], 0.75 * e);
+        var hi = rockPal.hi.split(',').map(Number);
+        rockHi = mixRGB(hi, duskPal.glow, 0.55 * e);
+        // the vanishing point drifts a little with the reading position, and towards the star at dusk
         var max = Math.max(1, document.documentElement.scrollHeight - h);
         var cx = w * 0.5, cy = h * (0.42 + 0.16 * (window.scrollY / max));
+        var sunX = w * 0.42, sunY = h * (1.12 - 0.36 * e);
+        cx += (sunX - cx) * 0.75 * e; cy += (sunY - cy) * 0.75 * e;
+        if (e > 0.003) drawSky(e);
         var cos = Math.cos(angle), sin = Math.sin(angle);
         var streak = Math.min(1, Math.abs(speed - BASE) / 0.5);
         // nebulae: soft clouds orbiting the vanishing point, swelling slowly as the flight goes on
@@ -2179,6 +2310,7 @@
           ctx.fillStyle = g;
           ctx.fillRect(0, 0, w, h);
         }
+        if (e > 0.003) drawStar(e, sunX, sunY);
         ctx.lineCap = 'round';
         for (var i = 0; i < stars.length; i++) {
           var st = stars[i];
@@ -2214,6 +2346,8 @@
         var target = BASE + Math.max(-1.4, Math.min(1.4, v * 0.0012));
         speed += (target - speed) * Math.min(1, dt * 3.5);
         angle += dt * 0.012;
+        clock += dt;
+        dusk += (duskTarget() - dusk) * Math.min(1, dt * 2.5);
         var dz = speed * dt;
         travel += dz;
         for (var i = 0; i < stars.length; i++) {
@@ -2235,8 +2369,9 @@
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(resize, 150);
       });
-      if (reduceMotion) window.addEventListener('scroll', function () { draw(0); }, { passive: true });
+      if (reduceMotion) window.addEventListener('scroll', function () { dusk = duskTarget(); draw(0); }, { passive: true });
 
+      dusk = duskTarget();
       recolor();
       resize();
       if (!reduceMotion) rafId = requestAnimationFrame(frame);
